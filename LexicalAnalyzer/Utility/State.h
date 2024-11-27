@@ -1,6 +1,3 @@
-//
-// Created by Hp on 11/27/2024.
-//
 
 #ifndef PROJECT_STATE_H
 #define PROJECT_STATE_H
@@ -9,7 +6,6 @@
 #include <unordered_map>
 
 class State {
-private:
     bool _isStartingState;
     int _priority;
     std::unordered_map<int, std::vector<State>> _transitions;

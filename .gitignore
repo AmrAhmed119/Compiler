@@ -4,6 +4,9 @@ cmake-build-release/
 build/
 out/
 
+# ignore vscode files
+.vscode/
+
 # Ignore CLion-specific files and directories
 .idea/
 

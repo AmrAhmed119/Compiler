@@ -9,4 +9,6 @@ add_executable(Project main.cpp
         LexicalAnalyzer/Parser/Parser.cpp
         LexicalAnalyzer/Parser/Parser.h
         LexicalAnalyzer/NFA/NFA.cpp
-        LexicalAnalyzer/NFA/NFA.h)
+        LexicalAnalyzer/NFA/NFA.h
+        LexicalAnalyzer/DFA/DFA.cpp
+        LexicalAnalyzer/DFA/DFA.h)
