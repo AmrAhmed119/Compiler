@@ -3,40 +3,28 @@
 #include <stack>
 #include <set>
 
+// Functions definetions are added just in case
+std::vector<State> &createCompinedState(const State &root);
+std::vector<State> &computeEpsClosure(std::vector<State> &epsTransStates);
+void initializeEpsClosure(const std::vector<State> &epsTransStates,
+                          std::set<State> &epsClosureSet, std::stack<State> &statesStack);
+void processEpsClosure(std::set<State> &epsClosureSet, std::stack<State> &statesStack);
+std::vector<State> convertSetToVector(const std::set<State> &epsClosureSet);
+State *createGragh(int vocabSize, std::stack<std::vector<State>> unVisited, std::set<std::vector<State>> marked);
+State *createDFAState(std::vector<State> dfaState);
+std::vector<State> &move(std::vector<State> &compinedState, int input);
+
 void DFA::createDFA(const State &root)
 {
     std::stack<std::vector<State>> unVisited;
     std::set<std::vector<State>> marked;
-    std::vector dfaState = createDfaState(root);
-    unVisited.push(dfaState);
+    std::vector compinedState = createCompinedState(root);
+    unVisited.push(compinedState);
     int vocabSize = root.getTransitions().size();
-    while (!unVisited.empty())
-    {
-        std::vector<State> dfaState = unVisited.top();
-        unVisited.pop();
-        marked.insert(dfaState);
-        for (int input = 1; input <= vocabSize; input++)
-        {
-            std::vector<State> newDfaState = computeEpsClosure(move(dfaState, input));
-            if (!marked.count(newDfaState))
-                unVisited.push(newDfaState);
-        }
-    }
+    DFA::_DFAroot = *createGragh(vocabSize, unVisited, marked);
 }
 
-std::vector<State> &move(std::vector<State> &dfaState, int input)
-{
-    std::vector<State> newDfaState;
-    for (State state : dfaState)
-    {
-        std::vector<State> nextStates = state.getNextStates(input);
-        for (State nextState : nextStates)
-            newDfaState.push_back(nextState);
-    }
-    return computeEpsClosure(newDfaState);
-}
-
-std::vector<State> &createDfaState(const State &root)
+std::vector<State> &createCompinedState(const State &root)
 {
     std::vector<State> epsTransStates = root.getTransitions().at(0);
     epsTransStates.push_back(root);
@@ -84,4 +72,56 @@ void processEpsClosure(std::set<State> &epsClosureSet, std::stack<State> &states
 std::vector<State> convertSetToVector(const std::set<State> &epsClosureSet)
 {
     return std::vector<State>(epsClosureSet.begin(), epsClosureSet.end());
+}
+
+State *createGragh(int vocabSize, std::stack<std::vector<State>> unVisited, std::set<std::vector<State>> marked)
+{
+    State *root;
+    bool rootInit = false;
+    while (!unVisited.empty())
+    {
+        std::vector<State> compinedState = unVisited.top();
+        unVisited.pop();
+        marked.insert(compinedState);
+        State *curDFAState = createDFAState(compinedState);
+        for (int input = 1; input < vocabSize; input++)
+        {
+            std::vector<State> newDfaState = computeEpsClosure(move(compinedState, input));
+            if (!marked.count(newDfaState))
+                unVisited.push(newDfaState);
+            curDFAState->addTransition(input, *createDFAState(newDfaState));
+        }
+        if (!rootInit)
+        {
+            rootInit = true;
+            root = curDFAState;
+        }
+        return root;
+    }
+}
+
+State *createDFAState(std::vector<State> dfaState)
+{
+    bool isStarting = false;
+    int priority = -1;
+    for (State state : dfaState)
+    {
+        // assume higher priority has larger int value
+        priority = std::max(priority, state.getPriority());
+        isStarting = isStarting || state.isStarting();
+    }
+    State *newState = new State(isStarting, priority);
+    return newState;
+}
+
+std::vector<State> &move(std::vector<State> &compinedState, int input)
+{
+    std::vector<State> newDfaState;
+    for (State state : compinedState)
+    {
+        std::vector<State> nextStates = state.getNextStates(input);
+        for (State nextState : nextStates)
+            newDfaState.push_back(nextState);
+    }
+    return computeEpsClosure(newDfaState);
 }
