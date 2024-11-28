@@ -16,10 +16,10 @@ public:
 };
 
 class DFA: public IDFA {
-    State& _DFAroot;
+    State* _DFAroot;
 public:
     ~DFA() override = default;
-    void createDFA(const State& root);
+    void createDFA(State* root);
     std::unordered_map<State&, std::vector<State&>> minimizeDFA();
 };
 
