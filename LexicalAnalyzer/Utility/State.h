@@ -1,24 +1,23 @@
-
 #ifndef PROJECT_STATE_H
 #define PROJECT_STATE_H
 
 #include <vector>
 #include <unordered_map>
+#include <memory> // For smart pointers
 
-class State
-{
+class State {
     bool _isStartingState;
     int _priority;
-    std::unordered_map<int, std::vector<State *>> _transitions;
+    std::unordered_map<int, std::vector<std::shared_ptr<State>>> _transitions;
 
 public:
     // Constructor
     explicit State(bool isStartingState = false, int priority = 0);
 
     // Methods to manage transitions
-    void addTransition(int input, State *nextState);
-    const std::vector<State *> &getNextStates(int input) const;
-    const std::unordered_map<int, std::vector<State *>> &getTransitions() const;
+    void addTransition(int input, std::shared_ptr<State> nextState);
+    const std::vector<std::shared_ptr<State>>& getNextStates(int input) const;
+    const std::unordered_map<int, std::vector<std::shared_ptr<State>>>& getTransitions() const;
 
     // Getters
     bool isStarting() const;
