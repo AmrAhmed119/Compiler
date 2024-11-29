@@ -21,6 +21,7 @@ public:
 
     // Getters
     bool isStarting() const;
+    bool isAccepting() const;
     int getPriority() const;
 
     // Setters

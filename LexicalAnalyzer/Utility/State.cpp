@@ -23,6 +23,7 @@ const std::unordered_map<int, std::vector<std::shared_ptr<State>>>& State::getTr
 
 // Getters
 bool State::isStarting() const { return _isStartingState; }
+bool State::isAccepting() const { return _priority >= 0; }
 int State::getPriority() const { return _priority; }
 
 // Setters

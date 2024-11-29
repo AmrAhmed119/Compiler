@@ -5,16 +5,23 @@
 #include <set>
 #include <vector>
 #include <memory>
-#include <unordered_map>
-#include "State.h"
+#include <unordered_set>
+#include "../Utility/State.h"
 
-class DFA {
+class IDFA {
+public:
+    virtual ~IDFA() = default;
+    virtual void createDFA(std::shared_ptr<State> root) = 0;
+    virtual std::unordered_set<std::shared_ptr<State>> minimizeDFA() = 0;
+};
+
+class DFA: public IDFA {
     std::shared_ptr<State> _DFAroot;
 
 public:
     ~DFA() = default;
-    void createDFA(std::shared_ptr<State> root);
-    std::unordered_map<std::shared_ptr<State>, std::vector<std::shared_ptr<State>>> minimizeDFA();
+    void createDFA(std::shared_ptr<State> root) override;
+    std::unordered_set<std::shared_ptr<State>> minimizeDFA() override;
 };
 
 #endif // PROJECT_DFA_H

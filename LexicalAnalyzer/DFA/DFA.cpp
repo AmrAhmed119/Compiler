@@ -5,6 +5,12 @@ std::vector<std::shared_ptr<State>> createCompinedState(std::shared_ptr<State> r
 std::vector<std::shared_ptr<State>> computeEpsClosure(std::vector<std::shared_ptr<State>>& epsTransStates);
 std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>>& dfaState);
 std::vector<std::shared_ptr<State>> move(const std::vector<std::shared_ptr<State>>& compinedState, int input);
+std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::shared_ptr<State>>> unVisited, std::set<std::vector<std::shared_ptr<State>>> marked);
+
+
+// Helper Functions (Minimization Part)
+void traverseGraph(const std::shared_ptr<State>& root, std::unordered_set<std::shared_ptr<State>>& visited);
+
 
 // Main DFA Creation
 void DFA::createDFA(std::shared_ptr<State> root) {
@@ -91,4 +97,49 @@ std::vector<std::shared_ptr<State>> move(const std::vector<std::shared_ptr<State
     }
 
     return computeEpsClosure(newDfaState);
+}
+
+
+// Minimization Part
+
+// Main DFA Minimalization
+std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA() {
+
+    // STEP 1: Traverse the graph and get all the states
+    std::unordered_set<std::shared_ptr<State>> visited;
+    traverseGraph(_DFAroot, visited);
+
+    // STEP 2: Split the nodes into two groups accepting and non-accepting
+    std::vector<std::shared_ptr<State>> acceptingStates, nonAcceptingStates;
+    for (const auto& state: visited) {
+        if (state->isAccepting()) {
+            acceptingStates.push_back(state);
+        } else {
+            nonAcceptingStates.push_back(state);
+        }
+    }
+
+    // STEP 3: Split the nodes into groups based on their transitions (Main Algorithm)
+
+    // 3.0: Create the groups
+    std::vector<std::vector<std::shared_ptr<State>>> groups = {acceptingStates, nonAcceptingStates};
+
+    // 3.1: map each state with its group id
+    // 3.2: start splitting the states into groups
+
+    return {};
+}
+
+// Helper Function to Traverse the Graph
+void traverseGraph(const std::shared_ptr<State>& root, std::unordered_set<std::shared_ptr<State>>& visited) {
+    if (visited.find(root) != visited.end()) {
+        return;
+    }
+    visited.insert(root);
+
+    for (const auto& [input, nextStates] : root->getTransitions()) {
+        for (const auto& nextState : nextStates) {
+            traverseGraph(nextState, visited);
+        }
+    }
 }
