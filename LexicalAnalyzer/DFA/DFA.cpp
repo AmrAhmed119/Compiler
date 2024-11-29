@@ -8,13 +8,12 @@ std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>>& dfaSt
 std::vector<std::shared_ptr<State>> move(const std::vector<std::shared_ptr<State>>& compinedState, int input);
 std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::shared_ptr<State>>> unVisited, std::set<std::vector<std::shared_ptr<State>>> marked);
 
-
 // Helper Functions (Minimization Part)
 void traverseGraph(const std::shared_ptr<State>& root, std::unordered_set<std::shared_ptr<State>>& visited);
 std::unordered_map<std::shared_ptr<State>, int> mapStatesToGroup(const std::vector<std::vector<std::shared_ptr<State>>>& groups);
 std::vector<std::vector<std::shared_ptr<State>>> computeNewGroups(const std::vector<std::vector<std::shared_ptr<State>>>& groups, const std::unordered_map<std::shared_ptr<State>, int>& stateToGroup);
 std::vector<int> computeStateTransitionsByGroupIds(const std::shared_ptr<State>& state, const std::unordered_map<std::shared_ptr<State>, int>& stateToGroup);
-
+std::unordered_set<std::shared_ptr<State>> createNewDFAFromGroups(const std::vector<std::vector<std::shared_ptr<State>>>& groups, std::unordered_map<std::shared_ptr<State>, int>);
 
 // Main DFA Creation
 void DFA::createDFA(std::shared_ptr<State> root) {
@@ -129,21 +128,24 @@ std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA() {
 
     while (true) {
         // map each state with its group id
-        std::unordered_map<std::shared_ptr<State>, int> stateToGroup = mapStatesToGroup(groups);
+        auto stateToGroup = mapStatesToGroup(groups);
 
         // start splitting the states into groups
-        std::vector<std::vector<std::shared_ptr<State>>> newGroups = computeNewGroups(groups, stateToGroup);
+        auto newGroups = computeNewGroups(groups, stateToGroup);
 
         // check if the groups are the same, if yes then break
         if (newGroups.size() == groups.size()) {
             break;
         }
+
+        // update the groups
+        groups = newGroups;
     }
 
-    // TODO STEP 4: Create the new DFA (new State represent each group)
+    // STEP 4: Create the new DFA (new State represent each group)
+    auto stateToGroup = mapStatesToGroup(groups);
 
-
-    return {};
+    return createNewDFAFromGroups(groups, stateToGroup);
 }
 
 // Helper Function to Traverse the Graph
@@ -202,4 +204,36 @@ std::vector<std::vector<std::shared_ptr<State>>> computeNewGroups(const std::vec
         }
     }
     return newGroups;
+}
+
+// Helper Function to Compute New DFA from the minimized groups
+std::unordered_set<std::shared_ptr<State>> createNewDFAFromGroups(const std::vector<std::vector<std::shared_ptr<State>>>& groups, std::unordered_map<std::shared_ptr<State>, int> stateToGroup) {
+    int newStatesSize = groups.size();
+    std::vector<std::shared_ptr<State>> newStates(newStatesSize);
+
+    // create a new state for each group
+    for (int i = 0; i < newStatesSize; i++) {
+        bool isStartingState = false;
+        int priority = -1;
+        for (const auto& state : groups[i]) {
+            isStartingState |= state->isStarting();
+            priority = std::max(priority, state->getPriority());
+        }
+        newStates[i] = std::make_shared<State>(isStartingState, priority);
+    }
+
+    for (int i = 0; i < newStatesSize; i++) {
+        auto groupTransitions = groups[i][0]->getTransitions();
+        for (const auto& [input, nextStates] : groupTransitions) {
+            auto nextState = nextStates[0];
+            newStates[i]->addTransition(input, newStates[stateToGroup[nextState]]);
+        }
+    }
+
+    std::unordered_set<std::shared_ptr<State>> finalStates;
+    for (const auto& state : newStates) {
+        finalStates.insert(state);
+    }
+
+    return finalStates;
 }
