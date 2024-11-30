@@ -1,20 +1,25 @@
 #ifndef PROJECT_DFA_H
 #define PROJECT_DFA_H
 
-#include <stack>
-#include <set>
+#include "../Utility/State.h"
 #include <vector>
-#include <memory>
 #include <unordered_map>
-#include "State.h"
 
-class DFA {
-    std::shared_ptr<State> _DFAroot;
-
+class IDFA {
 public:
-    ~DFA() = default;
-    void createDFA(std::shared_ptr<State> root);
-    std::unordered_map<std::shared_ptr<State>, std::vector<std::shared_ptr<State>>> minimizeDFA();
+    virtual ~IDFA() = default;
+    // Create the DFA from the NFA root state
+    virtual void createDFA(State* root) = 0;
+    // Minimize the DFA
+    virtual std::unordered_map<State&, std::vector<State&>> minimizeDFA() = 0;
 };
 
-#endif // PROJECT_DFA_H
+class DFA: public IDFA {
+    State* _DFAroot;
+public:
+    ~DFA() override = default;
+    void createDFA(State* root);
+    std::unordered_map<State&, std::vector<State&>> minimizeDFA();
+};
+
+#endif //PROJECT_DFA_H
