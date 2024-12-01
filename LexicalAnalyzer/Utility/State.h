@@ -4,9 +4,11 @@
 #include <vector>
 #include <unordered_map>
 #include <memory> // For smart pointers
+#include <string>
 
 class State {
     bool _isStartingState;
+    std::string _tokenClass;
     int _priority;
     std::unordered_map<int, std::vector<std::shared_ptr<State>>> _transitions;
 
@@ -23,10 +25,13 @@ public:
     bool isStarting() const;
     bool isAccepting() const;
     int getPriority() const;
+    std::string getTokenClass() const;
+
 
     // Setters
     void setPriority(int priority);
     void setStartingState(bool isStartingState);
+    std::string setTokenClass(const std::string &tokenClass);
 };
 
 #endif // PROJECT_STATE_H

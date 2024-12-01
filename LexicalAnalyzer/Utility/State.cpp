@@ -27,5 +27,6 @@ bool State::isAccepting() const { return _priority >= 0; }
 int State::getPriority() const { return _priority; }
 
 // Setters
-void State::setPriority(int priority) { _priority = priority; }
+void State::setPriority(int priority) {_priority = priority;}
 void State::setStartingState(bool isStartingState) { _isStartingState = isStartingState; }
+
