@@ -3,28 +3,29 @@
 #include <set>
 #include <memory>
 #include <queue>
+#include <map>
 
 // Functions definetions are added just in case
-std::vector<std::shared_ptr<State>> createCompinedState(std::shared_ptr<State> root);
+std::vector<std::shared_ptr<State>> combineStates(std::shared_ptr<State> root);
 std::vector<std::shared_ptr<State>> computeEpsClosure(std::vector<std::shared_ptr<State>> &epsTransStates);
 void initializeEpsClosure(std::vector<std::shared_ptr<State>> &epsTransStates,
                           std::set<std::shared_ptr<State>> &epsClosureSet, std::stack<std::shared_ptr<State>> &statesStack);
 void processEpsClosure(std::set<std::shared_ptr<State>> &epsClosureSet, std::stack<std::shared_ptr<State>> &statesStack);
 std::vector<std::shared_ptr<State>> convertSetToVector(std::set<std::shared_ptr<State>> &epsClosureSet);
-std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::shared_ptr<State>>> &unVisited, std::set<std::vector<std::shared_ptr<State>>> &marked);
+std::shared_ptr<State> createGragh(int vocabSize, std::queue<std::vector<std::shared_ptr<State>>> &unVisited, std::map<std::vector<std::shared_ptr<State>>, std::shared_ptr<State>> &marked);
 std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>> &dfaState);
 std::vector<std::shared_ptr<State>> move(std::vector<std::shared_ptr<State>> &compinedState, int input);
 
 void DFA::createDFA(std::shared_ptr<State> root, int vocabSize)
 {
-    std::stack<std::vector<std::shared_ptr<State>>> unVisited;
-    std::set<std::vector<std::shared_ptr<State>>> marked;
-    std::vector compinedState = createCompinedState(root);
+    std::queue<std::vector<std::shared_ptr<State>>> unVisited;
+    std::map<std::vector<std::shared_ptr<State>>, std::shared_ptr<State>> marked;
+    std::vector compinedState = combineStates(root);
     unVisited.push(compinedState);
     DFA::_DFAroot = createGragh(vocabSize, unVisited, marked);
 }
 
-std::vector<std::shared_ptr<State>> createCompinedState(std::shared_ptr<State> root)
+std::vector<std::shared_ptr<State>> combineStates(std::shared_ptr<State> root)
 {
     std::vector<std::shared_ptr<State>> epsTransStates;
     if (root->getTransitions().count(0))
@@ -79,28 +80,31 @@ std::vector<std::shared_ptr<State>> convertSetToVector(std::set<std::shared_ptr<
     return std::vector<std::shared_ptr<State>>(epsClosureSet.begin(), epsClosureSet.end());
 }
 
-std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::shared_ptr<State>>> &unVisited, std::set<std::vector<std::shared_ptr<State>>> &marked)
+std::shared_ptr<State> createGragh(int vocabSize, std::queue<std::vector<std::shared_ptr<State>>> &unVisited, std::map<std::vector<std::shared_ptr<State>>, std::shared_ptr<State>> &marked)
 {
-    std::shared_ptr<State> root = createDFAState(unVisited.top());
+    std::shared_ptr<State> root = createDFAState(unVisited.front());
     bool rootInit = false;
     std::queue<std::shared_ptr<State>> q;
     q.push(root);
     while (!unVisited.empty())
     {
-        std::vector<std::shared_ptr<State>> compinedState = unVisited.top();
+        std::vector<std::shared_ptr<State>> compinedState = unVisited.front();
         unVisited.pop();
-        marked.insert(compinedState);
         std::shared_ptr<State> curDFAState = q.front();
+        marked[compinedState]=curDFAState;
         for (int input = 1; input < vocabSize; input++)
         {
             std::vector<std::shared_ptr<State>> movedState = move(compinedState, input);
-            std::vector<std::shared_ptr<State>> newDfaState = computeEpsClosure(movedState);
-            if (marked.find(newDfaState) == marked.end())
+            if (marked.find(movedState) == marked.end())
             {
-                unVisited.push(newDfaState);
-                std::shared_ptr<State> next = createDFAState(newDfaState);
+                unVisited.push(movedState);
+                std::shared_ptr<State> next = createDFAState(movedState);
                 curDFAState->addTransition(input, next);
                 q.push(next);
+            }
+            else
+            {
+                curDFAState->addTransition(input, marked[movedState]);
             }
         }
         if (!rootInit)

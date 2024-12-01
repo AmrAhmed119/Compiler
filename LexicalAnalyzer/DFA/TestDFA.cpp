@@ -2,6 +2,7 @@
 #include <memory>
 #include "../Utility/State.cpp"
 #include "DFA.cpp"
+#include <set>
 
 std::shared_ptr<State> createDummyNFA()
 {
@@ -35,21 +36,42 @@ std::shared_ptr<State> createDummyNFA()
     return states[0];
 }
 
+void print(std::shared_ptr<State> root)
+{
+    std::queue<std::shared_ptr<State>> s;
+    std::set<std::shared_ptr<State>> uq;
+    s.push(root);
+    uq.insert(root);
+
+    while (!s.empty())
+    {
+        std::shared_ptr<State> cur = s.front();
+        s.pop();
+        std::cout << cur << "       ";
+        for (auto nextStates : cur->getTransitions())
+        {
+            std::cout<<nextStates.first<<"-----> ";
+            for (auto state : nextStates.second)
+            {
+                std::cout << state << "(" << state->getPriority() << ", " << state->isStarting() << ")" << ",";
+                if (uq.find(state) == uq.end())
+                {
+                    uq.insert(state);
+                    s.push(state);
+                }
+            }
+            std::cout << "        ";
+        }
+        std::cout << "\n";
+    }
+}
+
 int main()
 {
     std::shared_ptr<State> root = createDummyNFA();
     DFA *dfa = new DFA();
     dfa->createDFA(root, 3);
-    std::queue<std::shared_ptr<State>> s;
-    s.push(dfa->_DFAroot);
-    while (!s.empty())
-    {
-        std::shared_ptr<State> cur = s.front();
-        s.pop();
-        std::cout<<"Priority = "<<cur->getPriority()<<" is starting = "<<cur->isStarting()<<"\n";
-        for(auto states :cur->getTransitions())
-            for(auto state :states.second)
-                s.push(state);
-    }
+    print(dfa->_DFAroot);
+
     return 0;
 }
