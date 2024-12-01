@@ -17,12 +17,12 @@ std::unordered_set<std::shared_ptr<State>> createNewDFAFromGroups(const std::vec
 
 // Main DFA Creation
 void DFA::createDFA(std::shared_ptr<State> root) {
-    std::stack<std::vector<std::shared_ptr<State>>> unVisited;
-    std::set<std::vector<std::shared_ptr<State>>> marked;
-    std::vector<std::shared_ptr<State>> combinedState = createCompinedState(root);
-    unVisited.push(combinedState);
-    int vocabSize = root->getTransitions().size();
-    _DFAroot = createGragh(vocabSize, unVisited, marked);
+//    std::stack<std::vector<std::shared_ptr<State>>> unVisited;
+//    std::set<std::vector<std::shared_ptr<State>>> marked;
+//    std::vector<std::shared_ptr<State>> combinedState = createCompinedState(root);
+//    unVisited.push(combinedState);
+//    int vocabSize = root->getTransitions().size();
+//    _DFAroot = createGragh(vocabSize, unVisited, marked);
 }
 
 // Graph Creation
@@ -110,7 +110,7 @@ std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA() {
 
     // STEP 1: Traverse the graph and get all the states
     std::unordered_set<std::shared_ptr<State>> visited;
-    traverseGraph(_DFAroot, visited);
+    traverseGraph(DFAroot, visited);
 
     // STEP 2: Split the nodes into two groups accepting and non-accepting
     std::vector<std::shared_ptr<State>> acceptingStates, nonAcceptingStates;

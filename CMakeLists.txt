@@ -11,4 +11,10 @@ add_executable(Project main.cpp
         LexicalAnalyzer/NFA/NFA.cpp
         LexicalAnalyzer/NFA/NFA.h
         LexicalAnalyzer/DFA/DFA.cpp
-        LexicalAnalyzer/DFA/DFA.h)
+        LexicalAnalyzer/DFA/DFA.h
+        LexicalAnalyzer/Tokenizer/Tokenizer.cpp
+        LexicalAnalyzer/Tokenizer/Tokenizer.h
+        LexicalAnalyzer/Tokenizer/FileReader.cpp
+        LexicalAnalyzer/Tokenizer/FileReader.h
+        LexicalAnalyzer/Tokenizer/Token.cpp
+        LexicalAnalyzer/Tokenizer/Token.h)

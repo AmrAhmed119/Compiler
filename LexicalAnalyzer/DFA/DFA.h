@@ -16,10 +16,10 @@ public:
 };
 
 class DFA: public IDFA {
-    std::shared_ptr<State> _DFAroot;
 
 public:
     ~DFA() = default;
+    std::shared_ptr<State> DFAroot;
     void createDFA(std::shared_ptr<State> root) override;
     std::unordered_set<std::shared_ptr<State>> minimizeDFA() override;
 };
