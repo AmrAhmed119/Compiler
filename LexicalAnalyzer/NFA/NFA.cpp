@@ -1,5 +1,4 @@
-#include "NFA.h"
-
+#include <queue>
 #include "NFA.h"
 
 // Constructor definition
@@ -251,5 +250,3 @@ void NFA::printStateTransitions(const std::shared_ptr<State>& state, std::unorde
         }
     }
 }
-
-

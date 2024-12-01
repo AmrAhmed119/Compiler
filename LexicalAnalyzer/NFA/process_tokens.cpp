@@ -1,9 +1,7 @@
 #include <iostream>
 #include <stack>
-#include <cassert>
 #include <algorithm>
 #include "NFA.h"
-#include "../Utility/State.h"
 
 
 // this function for converting postfix to NFA ( for id )
@@ -93,15 +91,12 @@ NFA regexToNFA(const std::string& postfix) {
     return nfaStack.top();
 }
 
-
-
-
 int precedence(char op)
 {
-    if (op == '|')
+    if (op == '+')
         return 1;
-    if (op == '.')
-        return 2; // Concatenation
+    if (op == '|')
+        return 2;
     if (op == '*')
         return 3; // Kleene star
     return 0;
@@ -112,31 +107,33 @@ std::string infixToPostfix(const std::string &infix)
     std::stack<char> operators;
     std::string postfix;
 
-    for (char c : infix)
+    for (int i = 0;i<infix.size();i++)
     {
-        if (isalnum(c))
+        char c = infix[i];
+        if (c == ' ')
         {
-            // Operand (a character, digit, etc.), add to postfix
-            postfix += c;
+            continue;
         }
-        else if (c == '(')
+        if (c == '\\')
         {
-            // Left parenthesis, push to stack
+            postfix += infix[++i];
+            continue;
+        }
+        if (c == '(')
+        {
             operators.push(c);
         }
         else if (c == ')')
         {
-            // Right parenthesis, pop from stack to postfix until left parenthesis
             while (!operators.empty() && operators.top() != '(')
             {
                 postfix += operators.top();
                 operators.pop();
             }
-            operators.pop(); // Discard the '('
+            operators.pop();
         }
-        else if (c == '|' || c == '.' || c == '*')
+        else if (c == '|')
         {
-            // Operator: pop from stack to postfix based on precedence
             while (!operators.empty() && precedence(operators.top()) >= precedence(c))
             {
                 postfix += operators.top();
@@ -144,9 +141,12 @@ std::string infixToPostfix(const std::string &infix)
             }
             operators.push(c);
         }
+        else
+        {
+            postfix += c;
+        }
     }
 
-    // Pop all remaining operators from the stack
     while (!operators.empty())
     {
         postfix += operators.top();
@@ -154,8 +154,49 @@ std::string infixToPostfix(const std::string &infix)
     }
 
     return postfix;
+    //---------------------------------------------------------------------
+//    {
+//        if (isalnum(c))
+//        {
+//            // Operand (a character, digit, etc.), add to postfix
+//            postfix += c;
+//        }
+//        else if (c == '(')
+//        {
+//            // Left parenthesis, push to stack
+//            operators.push(c);
+//        }
+//        else if (c == ')')
+//        {
+//            // Right parenthesis, pop from stack to postfix until left parenthesis
+//            while (!operators.empty() && operators.top() != '(')
+//            {
+//                postfix += operators.top();
+//                operators.pop();
+//            }
+//            operators.pop(); // Discard the '('
+//        }
+//        else if (c == '|' || c == '+' || c == '*')
+//        {
+//            // Operator: pop from stack to postfix based on precedence
+//            while (!operators.empty() && precedence(operators.top()) >= precedence(c))
+//            {
+//                postfix += operators.top();
+//                operators.pop();
+//            }
+//            operators.push(c);
+//        }
+//    }
+//
+//    // Pop all remaining operators from the stack
+//    while (!operators.empty())
+//    {
+//        postfix += operators.top();
+//        operators.pop();
+//    }
+//
+//    return postfix;
 }
-
 
 // this to find nfa for simple words (all before id)
 NFA convertToNFA(const std::string& input) {
@@ -195,33 +236,4 @@ NFA convertToNFA(const std::string& input) {
     }
 
     return finalNFA;  // Return the final concatenated NFA
-}
-
-
-
-int main()
-{
-    // Example input regex: "a|b"
-    std::string regex = "abc";
-    std::string regex2 = "((a|b)(a|b|0)*)";
-
-    try
-    {
-        // Convert infix regex to postfix
-        std::string postfixRegex = infixToPostfix(regex2);
-        printf("Postfix regex: %s\n", postfixRegex.c_str());
-
-        // Call the Thompson construction function with the postfix regex
-        NFA result = convertToNFA(regex);
-        NFA result2 = regexToNFA(postfixRegex);
-
-        // Assuming you have methods in the NFA class to print the NFA's states and transitions
-        result2.printNFA(); // This method would print out the NFA's states and transitions
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-
-    return 0;
 }
