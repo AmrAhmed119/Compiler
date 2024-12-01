@@ -50,7 +50,7 @@ void print(std::shared_ptr<State> root)
         std::cout << cur << "       ";
         for (auto nextStates : cur->getTransitions())
         {
-            std::cout<<nextStates.first<<"-----> ";
+            std::cout << nextStates.first << "-----> ";
             for (auto state : nextStates.second)
             {
                 std::cout << state << "(" << state->getPriority() << ", " << state->isStarting() << ")" << ",";
@@ -70,7 +70,12 @@ int main()
 {
     std::shared_ptr<State> root = createDummyNFA();
     DFA *dfa = new DFA();
-    dfa->createDFA(root, 3);
+    std::set<int> s;
+    s.insert(0);
+    s.insert(1);
+    s.insert(2);
+    dfa->_epsCode = 0;
+    dfa->createDFA(root, s);
     print(dfa->_DFAroot);
 
     return 0;
