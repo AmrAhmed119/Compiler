@@ -2,6 +2,7 @@
 #include <stack>
 #include <set>
 #include <memory>
+#include <queue>
 
 // Functions definetions are added just in case
 std::vector<std::shared_ptr<State>> createCompinedState(std::shared_ptr<State> root);
@@ -14,19 +15,20 @@ std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::sh
 std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>> &dfaState);
 std::vector<std::shared_ptr<State>> move(std::vector<std::shared_ptr<State>> &compinedState, int input);
 
-void DFA::createDFA(std::shared_ptr<State> root)
+void DFA::createDFA(std::shared_ptr<State> root, int vocabSize)
 {
     std::stack<std::vector<std::shared_ptr<State>>> unVisited;
     std::set<std::vector<std::shared_ptr<State>>> marked;
     std::vector compinedState = createCompinedState(root);
     unVisited.push(compinedState);
-    int vocabSize = root->getTransitions().size();
     DFA::_DFAroot = createGragh(vocabSize, unVisited, marked);
 }
 
 std::vector<std::shared_ptr<State>> createCompinedState(std::shared_ptr<State> root)
 {
-    std::vector<std::shared_ptr<State>> epsTransStates = root->getTransitions().at(0);
+    std::vector<std::shared_ptr<State>> epsTransStates;
+    if (root->getTransitions().count(0))
+        epsTransStates = root->getTransitions().at(0);
     epsTransStates.push_back(root);
     return computeEpsClosure(epsTransStates);
 }
@@ -58,12 +60,15 @@ void processEpsClosure(std::set<std::shared_ptr<State>> &epsClosureSet, std::sta
         std::shared_ptr<State> state = statesStack.top();
         statesStack.pop();
         // Assume epsilon transitions are at index 0 in the transitions map
-        for (std::shared_ptr<State> epsTransState : state->getTransitions().at(0))
+        if (state->getTransitions().count(0))
         {
-            if (!epsClosureSet.count(epsTransState))
+            for (std::shared_ptr<State> epsTransState : state->getTransitions().at(0))
             {
-                epsClosureSet.insert(epsTransState);
-                statesStack.push(epsTransState);
+                if (epsClosureSet.find(epsTransState) == epsClosureSet.end())
+                {
+                    epsClosureSet.insert(epsTransState);
+                    statesStack.push(epsTransState);
+                }
             }
         }
     }
@@ -76,29 +81,36 @@ std::vector<std::shared_ptr<State>> convertSetToVector(std::set<std::shared_ptr<
 
 std::shared_ptr<State> createGragh(int vocabSize, std::stack<std::vector<std::shared_ptr<State>>> &unVisited, std::set<std::vector<std::shared_ptr<State>>> &marked)
 {
-    std::shared_ptr<State> root;
+    std::shared_ptr<State> root = createDFAState(unVisited.top());
     bool rootInit = false;
+    std::queue<std::shared_ptr<State>> q;
+    q.push(root);
     while (!unVisited.empty())
     {
         std::vector<std::shared_ptr<State>> compinedState = unVisited.top();
         unVisited.pop();
         marked.insert(compinedState);
-        std::shared_ptr<State> curDFAState = createDFAState(compinedState);
+        std::shared_ptr<State> curDFAState = q.front();
         for (int input = 1; input < vocabSize; input++)
         {
             std::vector<std::shared_ptr<State>> movedState = move(compinedState, input);
             std::vector<std::shared_ptr<State>> newDfaState = computeEpsClosure(movedState);
-            if (!marked.count(newDfaState))
+            if (marked.find(newDfaState) == marked.end())
+            {
                 unVisited.push(newDfaState);
-            curDFAState->addTransition(input, createDFAState(newDfaState));
+                std::shared_ptr<State> next = createDFAState(newDfaState);
+                curDFAState->addTransition(input, next);
+                q.push(next);
+            }
         }
         if (!rootInit)
         {
             rootInit = true;
-            root = curDFAState;
+            root = q.front();
         }
-        return root;
+        q.pop();
     }
+    return root;
 }
 
 std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>> &dfaState)
