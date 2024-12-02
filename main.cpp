@@ -1,5 +1,4 @@
 #include <iostream>
-#include "LexicalAnalyzer/Tokenizer/FileReader.h"
 #include "LexicalAnalyzer/Tokenizer/Tokenizer.h"
 #include "LexicalAnalyzer/DFA/DFA.h"
 
@@ -12,13 +11,30 @@ int main() {
     std::shared_ptr<State> state2 = std::make_shared<State>(false, 1, "Int");
     std::shared_ptr<State> state3 = std::make_shared<State>(false, 2, "Amr");
     std::shared_ptr<State> state4 = std::make_shared<State>(false, 3, "Ahmed");
+    std::shared_ptr<State> state5 = std::make_shared<State>(false, -1, "");
 
     state1->addTransition('a', state2);
     state1->addTransition('b', state3);
     state1->addTransition('c', state4);
 
+    state2->addTransition('a', state2);
+    state2->addTransition('b', state5);
+    state2->addTransition('c', state5);
+
+    state3->addTransition('a', state5);
+    state3->addTransition('b', state3);
+    state3->addTransition('c', state5);
+
+    state4->addTransition('a', state5);
+    state4->addTransition('b', state5);
+    state4->addTransition('c', state4);
+
+    state5->addTransition('a', state5);
+    state5->addTransition('b', state5);
+    state5->addTransition('c', state5);
+
     DFA dfa;
-    dfa.DFAroot = state1;
+    dfa._DFAroot = state1;
 
     states = dfa.minimizeDFA();
 
@@ -32,7 +48,7 @@ int main() {
     std::cout << "----------------Tokens---------------" << "\n";
 
     for (const auto& token : tokenizer.getTokens()) {
-        std::cout << token.getValue() << "   " << token.getType() << "\n";
+        std::cout << "Token: " << token.getValue() << "      Class: " << token.getType() << "\n";
     }
 
     return 0;
