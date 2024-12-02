@@ -106,13 +106,17 @@ std::shared_ptr<State> createDFAState(std::vector<std::shared_ptr<State>> &dfaSt
 {
     bool isStarting = false;
     int priority = -1;
+    std::string className = "";
     for (std::shared_ptr<State> state : dfaState)
     {
         // assume higher priority has larger int value
-        priority = std::max(priority, state->getPriority());
+        if(state->getPriority() > priority){
+            priority = state->getPriority();
+            className = state->getTokenClass();
+        }
         isStarting = isStarting || state->isStarting();
     }
-    std::shared_ptr<State> newState = std::make_shared<State>(isStarting, priority);
+    std::shared_ptr<State> newState = std::make_shared<State>(isStarting, priority, className);
     return newState;
 }
 
