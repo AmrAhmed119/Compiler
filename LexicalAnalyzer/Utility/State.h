@@ -31,7 +31,7 @@ public:
     // Setters
     void setPriority(int priority);
     void setStartingState(bool isStartingState);
-    std::string setTokenClass(const std::string &tokenClass);
+    void setTokenClass(std::string tokenClass);
 };
 
 #endif // PROJECT_STATE_H

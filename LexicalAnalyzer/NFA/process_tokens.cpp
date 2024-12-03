@@ -13,36 +13,6 @@
 #include <queue>
 
 
-void printNFA(std::shared_ptr<State> root)
-{
-    std::queue<std::shared_ptr<State>> s;
-    std::set<std::shared_ptr<State>> uq;
-    s.push(root);
-    uq.insert(root);
-
-    while (!s.empty())
-    {
-        std::shared_ptr<State> cur = s.front();
-        s.pop();
-        std::cout << cur << "       ";
-        for (auto nextStates : cur->getTransitions())
-        {
-            std::cout<<nextStates.first<<"-----> ";
-            for (auto state : nextStates.second)
-            {
-                std::cout << state << "(" << state->getPriority() << ", " << state->isStarting() << ")" << ",";
-                if (uq.find(state) == uq.end())
-                {
-                    uq.insert(state);
-                    s.push(state);
-                }
-            }
-            std::cout << "        ";
-        }
-        std::cout << "\n";
-    }
-}
-
 NFA buildNFAFromPostfix(const std::string &postfix) {
     std::stack<NFA> nfaStack;
 
@@ -143,6 +113,8 @@ std::string infixToPostfix(const std::string &infix)
         // Handle escaped characters (e.g., '\a')
         if (c == '\\') {
             postfix += infix[++i];
+            i++;
+            postfix += infix[i];
             continue;
         }
 
@@ -238,122 +210,4 @@ std::string formatRegEx(std::string regex) {
     }
 
     return res;
-}
-
-
-
-
-// std::string infixToPostfix(const std::string& regex) {
-//     std::string postfix;
-//     std::stack<char> stack;
-
-//     // Format the regex if necessary
-//     std::string formattedRegEx = formatRegEx(regex);
-
-//     for (char c : formattedRegEx) {
-//         switch (c) {
-//             case '(':
-//                 stack.push(c);
-//                 break;
-
-//             case ')':
-//                 while (!stack.empty() && stack.top() != '(') {
-//                     postfix += stack.top();
-//                     stack.pop();
-//                 }
-//                 stack.pop();  // Remove the '('
-//                 break;
-
-//             default:
-//                 while (!stack.empty()) {
-//                     char peekedChar = stack.top();
-//                     int peekedCharPrecedence = getPrecedence(peekedChar);
-//                     int currentCharPrecedence = getPrecedence(c);
-
-//                     if (peekedCharPrecedence >= currentCharPrecedence) {
-//                         postfix += stack.top();
-//                         stack.pop();
-//                     } else {
-//                         break;
-//                     }
-//                 }
-//                 stack.push(c);
-//                 break;
-//         }
-//     }
-
-//     // Pop all remaining operators from the stack
-//     while (!stack.empty()) {
-//         postfix += stack.top();
-//         stack.pop();
-//     }
-
-//     return postfix;
-// }
-
-
-
-
-
-
-int main(){
-    std::cout << "from nfa" << std::endl;
-
-    std::string regex;
-
-    std::ifstream file("/home/abdelrahman/Desktop/compiler/Compiler/LexicalAnalyzer/NFA/rules.txt"); // Open the file
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open file." << std::endl;
-    }
-
-    std::string line;
-    int currentLine = 0;
-
-    // Read lines until the desired line number is reached
-    while (std::getline(file, line)) {
-        currentLine++;
-        // printf("line: %s\n", line.c_str());
-        if (currentLine == 2) {
-            regex = line; // Return the line when found
-            // printf("regex: %s\n", regex.c_str());
-            break;
-        }
-    }
-
-
-    // std::string regex = "(\\+\\+)  ";
-    std::string regex2 = "(((((0)|(1)|(2))))+ . (((((0))))+) (( \\L) | (E (((((0))))+))))";
- try
-    {
-        std::string ans = formatRegEx(regex2);
-        printf("ans:  %s\n", ans.c_str() );
-
-        std::string ans2 = formatRegEx(regex);
-        printf("ans:  %s\n", ans.c_str() );
-
-        // Convert infix regex to postfix
-        std::string postfixRegex = infixToPostfix(ans2);
-        printf("Postfix regex: %s\n", postfixRegex.c_str());
-
-        std::string postfixRegex2 = infixToPostfix(ans);
-        printf("Postfix regex2: %s\n", postfixRegex2.c_str());
-
-        NFA result = buildNFAFromPostfix(postfixRegex);
-
-        std::shared_ptr<State> root = result.startState;
-        printNFA(root);
-
-        // Call the Thompson construction function with the postfix regex
-        // NFA result2 = regexToNFA(postfixRegex);
-        // std::shared_ptr<State> root = result2.startStates[0];
-        //printNFA(root);
-
-        // Assuming you have methods in the NFA class to print the NFA's states and transitions
-        //result2.printNFA(); // This method would print out the NFA's states and transitions
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-
 }

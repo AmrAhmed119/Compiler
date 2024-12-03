@@ -16,6 +16,8 @@ NFA regexToNFA(const std::string& postfix);
 // Function to determine operator precedence
 int precedence(char op);
 
+NFA buildNFAFromPostfix(const std::string &postfix);
+
 // Function to convert an infix regular expression to postfix notation
 std::string infixToPostfix(const std::string& infix);
 

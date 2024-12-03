@@ -40,7 +40,6 @@ public:
     void printNFA() const;  // Print the NFA
     void printStateTransitions(const std::shared_ptr<State> &state) const; // Print state transitions
 
-private:
     // Helper methods for merging and managing states
     void mergeStates(NFA &otherNFA); // Merge states from another NFA
     void addEpsilonTransition(std::shared_ptr<State> from, std::shared_ptr<State> to);

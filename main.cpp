@@ -12,7 +12,7 @@
 #include <filesystem>
 
 
-void printNFA2(std::shared_ptr<State> root)
+void printNFA(std::shared_ptr<State> root)
 {
     std::queue<std::shared_ptr<State>> s;
     std::set<std::shared_ptr<State>> uq;
@@ -121,49 +121,84 @@ void processFile(const std::string& filename,
 }
 
 
-// int main()
-// {
-//     // Example input regex: "a|b"
-//     std::string regex = "a|b";
-//     std::string regex2 = "((a|b)(a|b|0)*)";
+int main(){
+    std::cout << "Starting NFA creation..." << std::endl;
 
-//     //std::cout << "test" << std::endl;
+    std::string path = getMainFileDirectory("rules.txt");
 
-//     std::map<std::string, std::set<char>> nameToCharSet;
+    // File path to the rules file
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file." << std::endl;
+        return 1;
+    }
 
-//     std::string filename = "rules.txt";
-//     std::string fullPath = getMainFileDirectory(filename);
-//     std::set<int> vocab;
+    std::set<int> vocab;
+    std::map<std::string, std::set<char>> nameToCharSet;
+    processFile(path, nameToCharSet, vocab);
 
+    std::string line;
+    int currentLine = 0;
+    int priority = 0;  // Priority counter for accepting states
+    std::vector<NFA> nfaList;  // List to hold individual NFAs
 
-//     processFile(fullPath, nameToCharSet, vocab);
-//     // printMap(nameToCharSet);
-//     // std::cout << "\nCombined Character Set:\n";
-//     // for (const auto& c : vocab) {
-//     //     std::cout << c << " ";
-//     // }
-//     // std::cout << std::endl;
+    while (std::getline(file, line)) {
+        currentLine++;
 
+        // Odd lines contain token class names (skip them for now)
+        if (currentLine % 2 != 0) {
+            std::cout << "Token class: " << line << std::endl;
+            continue;
+        }
 
-//     try
-//     {
-//         // Convert infix regex to postfix
-//         std::string postfixRegex = infixToPostfix(regex);
-//         printf("Postfix regex: %s\n", postfixRegex.c_str());
+        // Even lines contain regex expressions
+        std::string regex = line;
+        try {
+            // Format the regex
+            std::string formattedRegex = formatRegEx(regex);
 
-//         // Call the Thompson construction function with the postfix regex
-//         NFA result2 = regexToNFA(postfixRegex);
-//         std::shared_ptr<State> root = result2.startStates[0];
-//         //printNFA(root);
+            // Convert to postfix notation
+            std::string postfixRegex = infixToPostfix(formattedRegex);
 
-//         // Assuming you have methods in the NFA class to print the NFA's states and transitions
-//         //result2.printNFA(); // This method would print out the NFA's states and transitions
-//     }
-//     catch (const std::exception &e)
-//     {
-//         std::cerr << "Error: " << e.what() << std::endl;
-//     }
+            // Build the NFA from the postfix regex
+            NFA nfa = buildNFAFromPostfix(postfixRegex);
 
-//     return 0;
-// }
+            // Set priorities for accepting states
+            for (auto &endState : nfa.endStates) {
+                endState->setPriority(priority);  // Assign priority to accepting states
+                printf("End state: %p, Priority: %d\n", endState.get(), priority);
+                endState->setTokenClass(line);  // Assign the token class to accepting states
+                printf("End state: %p, Token class: %s\n", endState.get(), line.c_str());
+            }
+            priority++;  // Increment priority for the next regex
 
+            // Add the NFA to the list
+            nfaList.push_back(nfa);
+
+        } catch (const std::exception &e) {
+            std::cerr << "Error processing regex: " << regex << "\n" << e.what() << std::endl;
+            return 1;
+        }
+    }
+
+    file.close();
+
+    // Combine all NFAs into one
+    NFA combinedNFA;
+
+    // Create a new common start state
+    auto commonStartState = std::make_shared<State>(true);  // Mark as starting state
+    combinedNFA.states.insert(commonStartState);  // Add to the combined NFA
+
+    for (auto &nfa : nfaList) {
+        // Add epsilon transitions from the common start state to each NFA's start state
+        combinedNFA.addTransition(commonStartState, '/l', nfa.startState);  // Assuming -1 represents epsilon
+
+        // Merge the states of each NFA into the combined NFA
+        combinedNFA.mergeStates(nfa);
+    }
+
+    // Set the start state of the combined NFA
+    combinedNFA.startState = commonStartState;
+    printNFA(combinedNFA.startState);
+}
