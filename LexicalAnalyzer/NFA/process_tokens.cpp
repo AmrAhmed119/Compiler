@@ -7,92 +7,109 @@
 
 
 
-// this function for converting postfix to NFA ( for id )
-NFA regexToNFA(const std::string& postfix) {
+#include "NFA.h"
+#include <stack>
+#include <string>
+#include <queue>
+
+
+void printNFA(std::shared_ptr<State> root)
+{
+    std::queue<std::shared_ptr<State>> s;
+    std::set<std::shared_ptr<State>> uq;
+    s.push(root);
+    uq.insert(root);
+
+    while (!s.empty())
+    {
+        std::shared_ptr<State> cur = s.front();
+        s.pop();
+        std::cout << cur << "       ";
+        for (auto nextStates : cur->getTransitions())
+        {
+            std::cout<<nextStates.first<<"-----> ";
+            for (auto state : nextStates.second)
+            {
+                std::cout << state << "(" << state->getPriority() << ", " << state->isStarting() << ")" << ",";
+                if (uq.find(state) == uq.end())
+                {
+                    uq.insert(state);
+                    s.push(state);
+                }
+            }
+            std::cout << "        ";
+        }
+        std::cout << "\n";
+    }
+}
+
+NFA buildNFAFromPostfix(const std::string &postfix) {
     std::stack<NFA> nfaStack;
 
-    for (size_t i = 0; i < postfix.size(); ++i) {
-        char r = postfix[i];
+    for (size_t i = 0; i < postfix.length(); ++i) {
+        char ch = postfix[i];
+        // if(nfaStack.size() != 0){
+        //     std::shared_ptr<State> root = nfaStack.top().startStates[0];
+        // printNFA(root);
+        // }
 
-        switch (r) {
-            case '|': { // Union
-                if (nfaStack.size() < 2) {
-                    throw std::runtime_error("Not enough NFAs for union.");
+        // Handle escaped characters
+        if (ch == '\\') {
+            if (i + 1 < postfix.length()) {
+                char nextChar = postfix[++i]; // Get the next character
+                if (nextChar == 'L') {
+                    // Handle epsilon
+                    NFA epsilonNFA;
+                    epsilonNFA.processSymbol('/l');
+                    nfaStack.push(epsilonNFA);
+                } else {
+                    // Handle regular escaped character
+                    NFA charNFA;
+                    charNFA.processSymbol(nextChar);
+                    nfaStack.push(charNFA);
                 }
-
-                auto nfa2 = nfaStack.top(); nfaStack.pop();
-                auto nfa1 = nfaStack.top(); nfaStack.pop();
-
-                NFA newNFA;
-                auto newStart = std::make_shared<State>();
-                auto newEnd = std::make_shared<State>();
-
-                newNFA.addTransition(newStart, '/l', nfa1.startStates.front());
-                newNFA.addTransition(newStart, '/l', nfa2.startStates.front());
-
-                for (const auto& end : nfa1.endStates) {
-                    newNFA.addTransition(end, '/l', newEnd);
-                }
-                for (const auto& end : nfa2.endStates) {
-                    newNFA.addTransition(end, '/l', newEnd);
-                }
-
-                newNFA.startStates.push_back(newStart);
-                newNFA.endStates.push_back(newEnd);
-
-                nfaStack.push(newNFA);
-                break;
+            } else {
+                throw std::runtime_error("Invalid escape sequence in postfix regex");
             }
-
-            case '*': { // Kleene star
-                if (nfaStack.empty()) {
-                    throw std::runtime_error("Not enough NFAs for '*'.");
-                }
-
-                auto nfa = nfaStack.top(); nfaStack.pop();
-
-                NFA newNFA;
-                auto newStart = std::make_shared<State>();
-                auto newEnd = std::make_shared<State>();
-
-                newNFA.addTransition(newStart, '/l', nfa.startStates.front());
-                newNFA.addTransition(newStart, '/l', newEnd);
-
-                for (const auto& end : nfa.endStates) {
-                    newNFA.addTransition(end, '/l', nfa.startStates.front());
-                    newNFA.addTransition(end, '/l', newEnd);
-                }
-
-                newNFA.startStates.push_back(newStart);
-                newNFA.endStates.push_back(newEnd);
-
-                nfaStack.push(newNFA);
-                break;
-            }
-
-            default: { // Literal characters (no concatenation)
-                NFA newNFA;
-
-                auto initial = std::make_shared<State>();
-                auto accept = std::make_shared<State>();
-
-                newNFA.addTransition(initial, r, accept);
-
-                newNFA.startStates.push_back(initial);
-                newNFA.endStates.push_back(accept);
-
-                nfaStack.push(newNFA);
-                break;
-            }
+        } else if (ch == '|') {
+            // OR operation
+            if (nfaStack.size() < 2) throw std::runtime_error("Invalid postfix expression for '|'");
+            NFA nfa2 = nfaStack.top(); nfaStack.pop();
+            NFA nfa1 = nfaStack.top(); nfaStack.pop();
+            nfa1.orOp(nfa2);
+            nfaStack.push(nfa1);
+        } else if (ch == '*') {
+            // Kleene star
+            if (nfaStack.empty()) throw std::runtime_error("Invalid postfix expression for '*'");
+            NFA nfa = nfaStack.top(); nfaStack.pop();
+            nfa.kleeneStar();
+            nfaStack.push(nfa);
+        } else if (ch == '+') {
+            // Positive closure
+            if (nfaStack.empty()) throw std::runtime_error("Invalid postfix expression for '+'");
+            NFA nfa = nfaStack.top(); nfaStack.pop();
+            nfa.positiveClosure();
+            nfaStack.push(nfa);
+        } else if (ch == '.') {
+            // Concatenation
+            if (nfaStack.size() < 2) throw std::runtime_error("Invalid postfix expression for '.'");
+            NFA nfa2 = nfaStack.top(); nfaStack.pop();
+            NFA nfa1 = nfaStack.top(); nfaStack.pop();
+            nfa1.concatenate(nfa2);
+            nfaStack.push(nfa1);
+        } else {
+            // Operand (character)
+            NFA charNFA;
+            charNFA.processSymbol(ch);
+            nfaStack.push(charNFA);
         }
     }
 
-    // if (nfaStack.size() != 1) {
-    //     throw std::runtime_error("Invalid postfix expression.");
-    // }
-
+    // At the end, there should be exactly one NFA on the stack
+    if (nfaStack.size() != 1) throw std::runtime_error("Invalid postfix expression");
     return nfaStack.top();
 }
+
 
 int precedence(char op)
 {
@@ -196,8 +213,8 @@ std::string formatRegEx(std::string regex) {
         if (regex[i] == '\\' ) {
             res += "\\\\";// Add "\L" as is
             i++; 
-            res += regex[i];         // Skip the 'L' character since it's part of "\L"
-            continue;
+            //res += regex[i];         // Skip the 'L' character since it's part of "\L"
+            //continue;
         }
         
         char c1 = regex[i];
@@ -277,33 +294,35 @@ std::string formatRegEx(std::string regex) {
 
 
 
+
+
 int main(){
     std::cout << "from nfa" << std::endl;
 
-    // std::string regex;
+    std::string regex;
 
-    // std::ifstream file("/home/abdelrahman/Desktop/compiler/Compiler/LexicalAnalyzer/NFA/rules.txt"); // Open the file
-    // if (!file.is_open()) {
-    //     std::cerr << "Error: Could not open file." << std::endl;
-    // }
+    std::ifstream file("/home/abdelrahman/Desktop/compiler/Compiler/LexicalAnalyzer/NFA/rules.txt"); // Open the file
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file." << std::endl;
+    }
 
-    // std::string line;
-    // int currentLine = 0;
+    std::string line;
+    int currentLine = 0;
 
-    // // Read lines until the desired line number is reached
-    // while (std::getline(file, line)) {
-    //     currentLine++;
-    //     // printf("line: %s\n", line.c_str());
-    //     if (currentLine == 32) {
-    //         regex = line; // Return the line when found
-    //         // printf("regex: %s\n", regex.c_str());
-    //         break;
-    //     }
-    // }
+    // Read lines until the desired line number is reached
+    while (std::getline(file, line)) {
+        currentLine++;
+        // printf("line: %s\n", line.c_str());
+        if (currentLine == 2) {
+            regex = line; // Return the line when found
+            // printf("regex: %s\n", regex.c_str());
+            break;
+        }
+    }
 
 
-    std::string regex = "boolean";
-    std::string regex2 = "(((((0)|(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))))+) | (((((0)|(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))))+ . (((((0)|(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))))+) (( \\L) | (E (((((0)|(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))))+))))";
+    // std::string regex = "(\\+\\+)  ";
+    std::string regex2 = "(((((0)|(1)|(2))))+ . (((((0))))+) (( \\L) | (E (((((0))))+))))";
  try
     {
         std::string ans = formatRegEx(regex2);
@@ -318,6 +337,11 @@ int main(){
 
         std::string postfixRegex2 = infixToPostfix(ans);
         printf("Postfix regex2: %s\n", postfixRegex2.c_str());
+
+        NFA result = buildNFAFromPostfix(postfixRegex);
+
+        std::shared_ptr<State> root = result.startState;
+        printNFA(root);
 
         // Call the Thompson construction function with the postfix regex
         // NFA result2 = regexToNFA(postfixRegex);

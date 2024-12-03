@@ -12,7 +12,7 @@
 #include <filesystem>
 
 
-void printNFA(std::shared_ptr<State> root)
+void printNFA2(std::shared_ptr<State> root)
 {
     std::queue<std::shared_ptr<State>> s;
     std::set<std::shared_ptr<State>> uq;
@@ -121,50 +121,49 @@ void processFile(const std::string& filename,
 }
 
 
-int main()
-{
-    // Example input regex: "a|b"
-    std::string regex = "a|b";
-    std::string regex2 = "((a|b)(a|b|0)*)";
+// int main()
+// {
+//     // Example input regex: "a|b"
+//     std::string regex = "a|b";
+//     std::string regex2 = "((a|b)(a|b|0)*)";
 
-    //std::cout << "test" << std::endl;
+//     //std::cout << "test" << std::endl;
 
-    std::map<std::string, std::set<char>> nameToCharSet;
+//     std::map<std::string, std::set<char>> nameToCharSet;
 
-    std::string filename = "rules.txt";
-    std::string fullPath = getMainFileDirectory(filename);
-    std::set<int> vocab;
-
-
-    processFile(fullPath, nameToCharSet, vocab);
-    // printMap(nameToCharSet);
-    // std::cout << "\nCombined Character Set:\n";
-    // for (const auto& c : vocab) {
-    //     std::cout << c << " ";
-    // }
-    // std::cout << std::endl;
+//     std::string filename = "rules.txt";
+//     std::string fullPath = getMainFileDirectory(filename);
+//     std::set<int> vocab;
 
 
-    try
-    {
-        // Convert infix regex to postfix
-        std::string postfixRegex = infixToPostfix(regex);
-        printf("Postfix regex: %s\n", postfixRegex.c_str());
+//     processFile(fullPath, nameToCharSet, vocab);
+//     // printMap(nameToCharSet);
+//     // std::cout << "\nCombined Character Set:\n";
+//     // for (const auto& c : vocab) {
+//     //     std::cout << c << " ";
+//     // }
+//     // std::cout << std::endl;
 
-        // Call the Thompson construction function with the postfix regex
-        NFA result = convertToNFA(regex);
-        NFA result2 = regexToNFA(postfixRegex);
-        std::shared_ptr<State> root = result2.startStates[0];
-        //printNFA(root);
 
-        // Assuming you have methods in the NFA class to print the NFA's states and transitions
-        //result2.printNFA(); // This method would print out the NFA's states and transitions
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
+//     try
+//     {
+//         // Convert infix regex to postfix
+//         std::string postfixRegex = infixToPostfix(regex);
+//         printf("Postfix regex: %s\n", postfixRegex.c_str());
 
-    return 0;
-}
+//         // Call the Thompson construction function with the postfix regex
+//         NFA result2 = regexToNFA(postfixRegex);
+//         std::shared_ptr<State> root = result2.startStates[0];
+//         //printNFA(root);
+
+//         // Assuming you have methods in the NFA class to print the NFA's states and transitions
+//         //result2.printNFA(); // This method would print out the NFA's states and transitions
+//     }
+//     catch (const std::exception &e)
+//     {
+//         std::cerr << "Error: " << e.what() << std::endl;
+//     }
+
+//     return 0;
+// }
 
