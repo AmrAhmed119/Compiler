@@ -154,7 +154,7 @@ void getTokenizerResults(std::string filePath, std::unordered_set<std::shared_pt
 }
 
 int parseRules() {
-    std::string filePath = "/media/hussein/Data/data/Github Repos/Compiler/LexicalAnalyzer/Inputs/rules.txt";
+    std::string filePath = getMainFileDirectory("rules.txt");
     RulesParser rulesParser(filePath);
     int statusCode = rulesParser.parseFile();
     if (statusCode == -1)
@@ -170,7 +170,7 @@ int main()
     parseRules();
     std::cout << "Starting NFA creation..." << std::endl;
 
-    std::string path = getMainFileDirectory("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/NFA/rules.txt");
+    std::string path = getMainFileDirectory("rules.txt_regularExpressions.txt");
 
     // File path to the rules file
     std::ifstream file(path);
@@ -264,7 +264,5 @@ int main()
     std::unordered_set<std::shared_ptr<State>> minimizedDFA = dfa->minimizeDFA();
     std::cout<<"DFA minimized with size = "<<minimizedDFA.size()<<"\n";
     getTokenizerResults("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/Inputs/program.txt", minimizedDFA);
-
-
 }
 

@@ -5,23 +5,15 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(Project main.cpp
         LexicalAnalyzer/Utility/State.cpp
-        LexicalAnalyzer/Utility/State.h
         LexicalAnalyzer/NFA/NFA.cpp
-        LexicalAnalyzer/NFA/NFA.h
         LexicalAnalyzer/DFA/DFA.cpp
-        LexicalAnalyzer/DFA/DFA.h
         LexicalAnalyzer/RulesParser/RulesParser.cpp
-        LexicalAnalyzer/RulesParser/RulesParser.h
         LexicalAnalyzer/RulesParser/RegularExpression.cpp
-        LexicalAnalyzer/RulesParser/RegularExpression.h
         LexicalAnalyzer/RulesParser/RegularDefinition.cpp
-        LexicalAnalyzer/RulesParser/RegularDefinition.h
         LexicalAnalyzer/Utility/Util.cpp
-        LexicalAnalyzer/Utility/Util.h)
         LexicalAnalyzer/Tokenizer/Tokenizer.cpp
-        LexicalAnalyzer/Tokenizer/Tokenizer.h
-        LexicalAnalyzer/Tokenizer/FileReader.cpp
-        LexicalAnalyzer/Tokenizer/FileReader.h
         LexicalAnalyzer/Tokenizer/Token.cpp
-        LexicalAnalyzer/Tokenizer/Token.h
-        LexicalAnalyzer/NFA/process_tokens.cpp)
+        LexicalAnalyzer/Tokenizer/FileReader.cpp
+        LexicalAnalyzer/NFA/process_tokens.cpp
+        )
+
