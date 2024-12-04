@@ -30,4 +30,5 @@ std::string State::getTokenClass() const { return _tokenClass; }
 // Setters
 void State::setPriority(int priority) {_priority = priority;}
 void State::setStartingState(bool isStartingState) { _isStartingState = isStartingState; }
+void State::setTokenClass(std::string tokenClass) { _tokenClass = tokenClass; }
 
