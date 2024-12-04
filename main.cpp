@@ -12,6 +12,8 @@
 #include <filesystem>
 #include "LexicalAnalyzer/DFA/DFA.h"
 #include "LexicalAnalyzer/Tokenizer/Tokenizer.h"
+#include <string>
+#include "LexicalAnalyzer/RulesParser/RulesParser.h"
 
 void printNFA(std::shared_ptr<State> root)
 {
@@ -151,8 +153,21 @@ void getTokenizerResults(std::string filePath, std::unordered_set<std::shared_pt
     }
 }
 
+int parseRules() {
+    std::string filePath = "/media/hussein/Data/data/Github Repos/Compiler/LexicalAnalyzer/Inputs/rules.txt";
+    RulesParser rulesParser(filePath);
+    int statusCode = rulesParser.parseFile();
+    if (statusCode == -1)
+    {
+        std::cerr << "Error: Parsing failed" << std::endl;
+        return -1;
+    }
+    return 0;
+}
+
 int main()
 {
+    parseRules();
     std::cout << "Starting NFA creation..." << std::endl;
 
     std::string path = getMainFileDirectory("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/NFA/rules.txt");
@@ -249,4 +264,7 @@ int main()
     std::unordered_set<std::shared_ptr<State>> minimizedDFA = dfa->minimizeDFA();
     std::cout<<"DFA minimized with size = "<<minimizedDFA.size()<<"\n";
     getTokenizerResults("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/Inputs/program.txt", minimizedDFA);
+
+
 }
+
