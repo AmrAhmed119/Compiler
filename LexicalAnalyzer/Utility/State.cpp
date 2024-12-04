@@ -1,44 +1,34 @@
-
 #include "State.h"
 
 // Constructor
-State::State(bool isStartingState, int priority)
-        : _isStartingState(isStartingState), _priority(priority) {}
+State::State(bool isStartingState, int priority, std::string tokenClass)
+    : _isStartingState(isStartingState), _priority(priority), _tokenClass(tokenClass) {}
 
-// Add a transition
-void State::addTransition(int input, const State& nextState) {
+// Add a transition to the state
+void State::addTransition(int input, std::shared_ptr<State> nextState) {
     _transitions[input].push_back(nextState);
 }
 
-// Get the next states for a specific input
-const std::vector<State>& State::getNextStates(int input) const {
-    static const std::vector<State> empty;
+// Get next states for a specific input
+const std::vector<std::shared_ptr<State>>& State::getNextStates(int input) const {
+    static const std::vector<std::shared_ptr<State>> empty;
     auto it = _transitions.find(input);
-    return it != _transitions.end() ? it->second : empty;
+    return (it != _transitions.end()) ? it->second : empty;
 }
 
 // Get all transitions
-const std::unordered_map<int, std::vector<State>>& State::getTransitions() const {
+const std::unordered_map<int, std::vector<std::shared_ptr<State>>>& State::getTransitions() const {
     return _transitions;
 }
 
-// Check if this is the starting state
-bool State::isStarting() const {
-    return _isStartingState;
-}
+// Getters
+bool State::isStarting() const { return _isStartingState; }
+bool State::isAccepting() const { return _priority >= 0; }
+int State::getPriority() const { return _priority; }
+std::string State::getTokenClass() const { return _tokenClass; }
 
-// Get the priority of the state
-int State::getPriority() const {
-    return _priority;
-}
-
-// Set the priority
-void State::setPriority(int priority) {
-    _priority = priority;
-}
-
-// Set whether this is the starting state
-void State::setStartingState(bool isStartingState) {
-    _isStartingState = isStartingState;
-}
+// Setters
+void State::setPriority(int priority) {_priority = priority;}
+void State::setStartingState(bool isStartingState) { _isStartingState = isStartingState; }
+void State::setTokenClass(std::string tokenClass) { _tokenClass = tokenClass; }
 

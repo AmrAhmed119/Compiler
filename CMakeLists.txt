@@ -18,3 +18,10 @@ add_executable(Project main.cpp
         LexicalAnalyzer/RulesParser/RegularDefinition.h
         LexicalAnalyzer/Utility/Util.cpp
         LexicalAnalyzer/Utility/Util.h)
+        LexicalAnalyzer/Tokenizer/Tokenizer.cpp
+        LexicalAnalyzer/Tokenizer/Tokenizer.h
+        LexicalAnalyzer/Tokenizer/FileReader.cpp
+        LexicalAnalyzer/Tokenizer/FileReader.h
+        LexicalAnalyzer/Tokenizer/Token.cpp
+        LexicalAnalyzer/Tokenizer/Token.h
+        LexicalAnalyzer/NFA/process_tokens.cpp)
