@@ -155,7 +155,7 @@ int main()
 {
     std::cout << "Starting NFA creation..." << std::endl;
 
-    std::string path = getMainFileDirectory("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/Inputs/rules.txt");
+    std::string path = getMainFileDirectory("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/NFA/rules.txt");
 
     // File path to the rules file
     std::ifstream file(path);
@@ -202,9 +202,9 @@ int main()
             for (auto &endState : nfa.endStates)
             {
                 endState->setPriority(priority); // Assign priority to accepting states
-                // printf("End state: %p, Priority: %d\n", endState.get(), priority);
+                printf("End state: %p, Priority: %d\n", endState.get(), priority);
                 endState->setTokenClass(line); // Assign the token class to accepting states
-                // printf("End state: %p, Token class: %s\n", endState.get(), line.c_str());
+                printf("End state: %p, Token class: %s\n", endState.get(), line.c_str());
             }
             priority++; // Increment priority for the next regex
 
@@ -248,5 +248,5 @@ int main()
     std::cout<<"DFA created\n";
     std::unordered_set<std::shared_ptr<State>> minimizedDFA = dfa->minimizeDFA();
     std::cout<<"DFA minimized with size = "<<minimizedDFA.size()<<"\n";
-    getTokenizerResults("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/Inputs/program2.txt", minimizedDFA);
+    getTokenizerResults("/home/ahmed/level4term1/compilers/Project/Compiler/LexicalAnalyzer/Inputs/program.txt", minimizedDFA);
 }
