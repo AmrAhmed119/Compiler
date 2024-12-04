@@ -15,4 +15,5 @@ add_executable(Project main.cpp
         LexicalAnalyzer/Tokenizer/FileReader.cpp
         LexicalAnalyzer/Tokenizer/FileReader.h
         LexicalAnalyzer/Tokenizer/Token.cpp
-        LexicalAnalyzer/Tokenizer/Token.h)
+        LexicalAnalyzer/Tokenizer/Token.h
+        LexicalAnalyzer/NFA/process_tokens.cpp)

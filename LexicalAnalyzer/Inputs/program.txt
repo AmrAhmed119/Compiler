@@ -1,1 +1,4 @@
-122111122211112222211122212122
+int sum , count , pass , mnt; while (pass != 10)
+{
+pass = pass + 1 ;
+}
