@@ -1,6 +1,3 @@
-//
-// Created by hussein on 11/29/24.
-//
 
 #include <algorithm>
 #include "RegularDefinition.h"

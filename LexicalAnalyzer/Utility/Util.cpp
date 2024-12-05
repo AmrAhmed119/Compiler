@@ -1,9 +1,9 @@
-//
-// Created by hussein on 11/29/24.
-//
 
 #include "Util.h"
 #include <sstream>
+#include <queue>
+#include <set>
+#include <iostream>
 
 std::vector<std::string> split(const std::string& str, char delimiter) {
     std::vector<std::string> tokens;
@@ -53,6 +53,36 @@ void removeFirstAndLastChars(std::string& str){
     if (str.size()>2) {
         str.erase(0, 1);
         str.erase(str.length()-1);
+    }
+}
+
+void printGraph(std::shared_ptr<State> root)
+{
+    std::queue<std::shared_ptr<State>> s;
+    std::set<std::shared_ptr<State>> uq;
+    s.push(root);
+    uq.insert(root);
+
+    while (!s.empty())
+    {
+        std::shared_ptr<State> cur = s.front();
+        s.pop();
+        std::cout << cur << "       ";
+        for (auto nextStates : cur->getTransitions())
+        {
+            std::cout << nextStates.first << "-----> ";
+            for (auto state : nextStates.second)
+            {
+                std::cout << state << "(" << state->getPriority() << ", " << state->isStarting() << "," << state->getTokenClass() << ")" << "\n";
+                if (uq.find(state) == uq.end())
+                {
+                    uq.insert(state);
+                    s.push(state);
+                }
+            }
+            std::cout << "        ";
+        }
+        std::cout << "\n";
     }
 }
 

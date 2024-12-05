@@ -24,7 +24,7 @@ std::string Tokenizer::getNextToken() {
     std::string str = _currentWords.front();
     int strLen = str.size();
     auto currentState = _startingState;
-    int longestMatch = currentState->isAccepting() ? 0 : -1;
+    int longestMatch = currentState->isAccepting() ? _currentIndex : -1;
     std::string tokenClass = currentState->isAccepting() ? currentState->getTokenClass() : "";
 
     for (int i = _currentIndex; i < strLen; i++) {
@@ -42,7 +42,9 @@ std::string Tokenizer::getNextToken() {
 
     if (longestMatch == -1) {
         _currentWords.pop();
-        return "Error: No match found for {  " + str.substr(_currentIndex) + "  }";
+        std::string ans = "Error: No match found for {  " + str.substr(_currentIndex) + "  }";
+        _currentIndex = 0;
+        return ans;
     }
 
     std::string token = str.substr(_currentIndex, longestMatch - _currentIndex + 1);

@@ -1,0 +1,60 @@
+Tokenization results for the input program:
+
+int
+sum
+,
+count
+,
+pass
+,
+mnt
+;
+while
+(
+pass
+!=
+10
+)
+{
+pass
+=
+pass
++
+1
+;
+}
+
+
+Tokenization results in detail:
+
+Token: int          Class: int          
+Token: sum          Class: id           
+Token: ,            Class: ,            
+Token: count        Class: id           
+Token: ,            Class: ,            
+Token: pass         Class: id           
+Token: ,            Class: ,            
+Token: mnt          Class: id           
+Token: ;            Class: ;            
+Token: while        Class: while        
+Token: (            Class: \(           
+Token: pass         Class: id           
+Token: !=           Class: relop        
+Token: 10           Class: num          
+Token: )            Class: \)           
+Token: {            Class: {            
+Token: pass         Class: id           
+Token: =            Class: assign       
+Token: pass         Class: id           
+Token: +            Class: addop        
+Token: 1            Class: num          
+Token: ;            Class: ;            
+Token: }            Class: }            
+
+
+Symbol Table:
+
+variable-name: sum                      Class: id           
+variable-name: count                    Class: id           
+variable-name: pass                     Class: id           
+variable-name: mnt                      Class: id           

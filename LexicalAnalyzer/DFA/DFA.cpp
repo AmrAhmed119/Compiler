@@ -1,5 +1,6 @@
 #include "DFA.h"
 #include <stack>
+#include <iostream>
 #include <set>
 #include <memory>
 #include <queue>
@@ -146,23 +147,33 @@ std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA()
     traverseGraph(_DFAroot, visited);
 
     // STEP 2: Split the nodes into two groups accepting and non-accepting
-    std::vector<std::shared_ptr<State>> acceptingStates, nonAcceptingStates;
+    std::vector<std::shared_ptr<State>> nonAcceptingStates;
+    std::map<std::string, std::vector<std::shared_ptr<State>>> acceptingStatesMap;
+
     for (const auto &state : visited)
     {
-        if (state->isAccepting())
-        {
-            acceptingStates.push_back(state);
+        if (state->isAccepting()) {
+            acceptingStatesMap[state->getTokenClass()].push_back(state);
         }
-        else
+    }
+
+    std::set<std::string> uniqueClassesAccepting;
+    for (const auto &state : visited)
+    {
+        if (!state->isAccepting())
         {
             nonAcceptingStates.push_back(state);
         }
     }
+    std::vector<std::vector<std::shared_ptr<State>>> groups = {nonAcceptingStates};
+
+    for (const auto &[_, states] : acceptingStatesMap)
+    {
+        groups.push_back(states);
+    }
+
 
     // STEP 3: Split the nodes into groups based on their transitions (Main Algorithm)
-    // Create the groups
-    std::vector<std::vector<std::shared_ptr<State>>> groups = {acceptingStates, nonAcceptingStates};
-
     while (true)
     {
         // map each state with its group id

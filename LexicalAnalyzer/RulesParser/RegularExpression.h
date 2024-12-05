@@ -1,6 +1,3 @@
-//
-// Created by hussein on 11/29/24.
-//
 
 #ifndef COMPILER_REGULAREXPRESSION_H
 #define COMPILER_REGULAREXPRESSION_H

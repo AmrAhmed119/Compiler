@@ -50,8 +50,8 @@ void NFA::concatenate(NFA &nfa1) {
 
 // Perform OR operation
 void NFA::orOp(NFA &nfa1) {
-    auto newStart = std::make_shared<State>(true, false);
-    auto newEnd = std::make_shared<State>(false, true);
+    auto newStart = std::make_shared<State>(false, -1);
+    auto newEnd = std::make_shared<State>(false, -1);
 
     addEpsilonTransition(newStart, startState);
     addEpsilonTransition(newStart, nfa1.startState);
@@ -73,8 +73,8 @@ void NFA::orOp(NFA &nfa1) {
 
 // Apply Kleene Star operation
 void NFA::kleeneStar() {
-    auto newStart = std::make_shared<State>(true, false);
-    auto newEnd = std::make_shared<State>(false, true);
+    auto newStart = std::make_shared<State>(false, -1);
+    auto newEnd = std::make_shared<State>(false, -1);
 
     addEpsilonTransition(newStart, startState);
     for (auto &endState : endStates) {
@@ -91,8 +91,8 @@ void NFA::kleeneStar() {
 
 // Apply positive closure
 void NFA::positiveClosure() {
-    auto newStart = std::make_shared<State>(true, false);
-    auto newEnd = std::make_shared<State>(false, true);
+    auto newStart = std::make_shared<State>(false, -1);
+    auto newEnd = std::make_shared<State>(false, -1);
 
     addEpsilonTransition(newStart, startState);
     for (auto &endState : endStates) {
@@ -108,8 +108,8 @@ void NFA::positiveClosure() {
 
 // Process a single symbol
 void NFA::processSymbol(const int &symbol) {
-    auto start = std::make_shared<State>(true, false);
-    auto end = std::make_shared<State>(false, true);
+    auto start = std::make_shared<State>(false, -1);
+    auto end = std::make_shared<State>(false, -1);
     addTransition(start, symbol, end);
 
     startState = start;

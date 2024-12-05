@@ -1,6 +1,3 @@
-//
-// Created by hussein on 11/29/24.
-//
 
 #ifndef COMPILER_RULESPARSER_H
 #define COMPILER_RULESPARSER_H
