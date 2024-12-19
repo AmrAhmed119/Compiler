@@ -5,6 +5,7 @@
 #include "NFA.h"
 #include "process_tokens.h"
 #include "NFA.h"
+#include "../Utility/Util.h"
 #include <stack>
 #include <string>
 #include <queue>
@@ -27,7 +28,7 @@ NFA buildNFAFromPostfix(const std::string &postfix) {
                 if (nextChar == 'L') {
                     // Handle epsilon
                     NFA epsilonNFA;
-                    epsilonNFA.processSymbol('/l');
+                    epsilonNFA.processSymbol(epsilon);
                     nfaStack.push(epsilonNFA);
                 } else {
                     // Handle regular escaped character

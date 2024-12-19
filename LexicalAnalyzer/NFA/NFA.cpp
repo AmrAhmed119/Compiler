@@ -40,7 +40,7 @@ void NFA::mergeStates(NFA &otherNFA) {
 
 // Add an epsilon transition
 void NFA::addEpsilonTransition(std::shared_ptr<State> from, std::shared_ptr<State> to) {
-    addTransition(from, '/l', to);  // Use '/l' to denote epsilon transitions
+    addTransition(from, epsilon, to);  // Use '/l' to denote epsilon transitions
 }
 
 // Perform concatenation
@@ -136,8 +136,8 @@ std::set<std::shared_ptr<State>> NFA::computeEpsilonClosure(const std::set<std::
         stack.pop();
 
         auto transitions = current->getTransitions();
-        if (transitions.find('/l') != transitions.end()) {
-            for (auto &nextState : transitions['/l']) {
+        if (transitions.find(epsilon) != transitions.end()) {
+            for (auto &nextState : transitions[epsilon]) {
                 if (closure.find(nextState) == closure.end()) {
                     closure.insert(nextState);
                     stack.push(nextState);
@@ -260,7 +260,7 @@ std::shared_ptr<State> NFA::getStartState(std::ifstream& file) {
 
     for (auto &nfa: nfaList) {
         // Add epsilon transitions from the common start state to each NFA's start state
-        combinedNFA.addTransition(commonStartState, '/l', nfa.startState);
+        combinedNFA.addTransition(commonStartState, epsilon, nfa.startState);
 
         // Merge the states of each NFA into the combined NFA
         combinedNFA.mergeStates(nfa);

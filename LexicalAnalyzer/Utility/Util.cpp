@@ -1,9 +1,10 @@
-
 #include "Util.h"
+#include "../Tokenizer/Tokenizer.h"
 #include <sstream>
 #include <queue>
 #include <set>
 #include <iostream>
+#include <iomanip>
 
 std::vector<std::string> split(const std::string& str, char delimiter) {
     std::vector<std::string> tokens;
@@ -84,6 +85,40 @@ void printGraph(std::shared_ptr<State> root)
         }
         std::cout << "\n";
     }
+}
+
+void performTokenization() {
+    Tokenizer tokenizer(programPath, tableFilePath);
+    std::ofstream outputFile("../LexicalAnalyzer/Outputs/tokens.txt", std::ios::out);
+    if (!outputFile) {
+        std::cerr << "Error: Unable to open output file \"tokens\"." << std::endl;
+        return;
+    }
+
+    outputFile << "Tokenization results for the input program:\n\n";
+    while (tokenizer.hasMoreTokens()) {
+        std::string token = tokenizer.getNextToken();
+        outputFile << token << "\n";
+    }
+
+    outputFile << "\n\nTokenization results in detail:\n\n";
+    for (const auto &token: tokenizer.getTokens()) {
+        outputFile << std::left << std::setw(20) << ("Token: " + token.getValue())
+                   << std::setw(20) << ("Class: " + token.getType()) << "\n";
+    }
+
+    outputFile << "\n\nSymbol Table:\n\n";
+    std::vector<Token> symbolTable = tokenizer.getTokens();
+    std::set<std::string> uniqueIdentifiers;
+    for (const auto &token: symbolTable) {
+        if (token.getType() == "id" && uniqueIdentifiers.find(token.getValue()) == uniqueIdentifiers.end()) {
+            uniqueIdentifiers.insert(token.getValue());
+            outputFile << std::left << std::setw(40) << ("variable-name: " + token.getValue())
+                       << std::setw(20) << ("Class: " + token.getType()) << "\n";
+        }
+    }
+
+    outputFile.close();
 }
 
 void print(const char* message, bool isError) {

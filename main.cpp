@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <queue>
 #include <fstream>
 #include <map>
 #include <set>
@@ -11,45 +10,6 @@
 #include "LexicalAnalyzer/DFA/DFA.h"
 #include "LexicalAnalyzer/Tokenizer/Tokenizer.h"
 #include "LexicalAnalyzer/Utility/Util.h"
-
-const std::string rulesPath = "../LexicalAnalyzer/Inputs/rules.txt";
-const std::string intermediatePath = "../LexicalAnalyzer/Inputs/rules.txt_regularExpressions.txt";
-const std::string programPath = "../LexicalAnalyzer/Inputs/program.txt";
-const std::string tableFilePath = "../LexicalAnalyzer/Outputs/transitionTable.txt";
-
-void performTokenization() {
-    Tokenizer tokenizer(programPath, tableFilePath);
-    std::ofstream outputFile("../LexicalAnalyzer/Outputs/tokens.txt", std::ios::out);
-    if (!outputFile) {
-        std::cerr << "Error: Unable to open output file \"tokens\"." << std::endl;
-        return;
-    }
-
-    outputFile << "Tokenization results for the input program:\n\n";
-    while (tokenizer.hasMoreTokens()) {
-        std::string token = tokenizer.getNextToken();
-        outputFile << token << "\n";
-    }
-
-    outputFile << "\n\nTokenization results in detail:\n\n";
-    for (const auto &token: tokenizer.getTokens()) {
-        outputFile << std::left << std::setw(20) << ("Token: " + token.getValue())
-                   << std::setw(20) << ("Class: " + token.getType()) << "\n";
-    }
-
-    outputFile << "\n\nSymbol Table:\n\n";
-    std::vector<Token> symbolTable = tokenizer.getTokens();
-    std::set<std::string> uniqueIdentifiers;
-    for (const auto &token: symbolTable) {
-        if (token.getType() == "id" && uniqueIdentifiers.find(token.getValue()) == uniqueIdentifiers.end()) {
-            uniqueIdentifiers.insert(token.getValue());
-            outputFile << std::left << std::setw(40) << ("variable-name: " + token.getValue())
-                       << std::setw(20) << ("Class: " + token.getType()) << "\n";
-        }
-    }
-
-    outputFile.close();
-}
 
 void build() {
     print("STEP1 : Parsing rules...");
@@ -72,7 +32,7 @@ void build() {
 
     print("STEP3 : Starting DFA creation...");
     DFA *dfa = new DFA();
-    dfa->_epsCode = '/l';
+    dfa->_epsCode = epsilon;
     dfa->createDFA(startState, vocab);
 
     print("STEP4 : Minimizing DFA...");
@@ -81,7 +41,7 @@ void build() {
 
 void run() {
     std::cout << "STEP5 : Starting Token extraction..." << std::endl;
-//    Tokenizer tokenizer(programPath, tableFilePath);
+    Tokenizer tokenizer(programPath, tableFilePath);
     performTokenization();
 
     std::cout << "STEP6 : Starting Parser..." << std::endl;
