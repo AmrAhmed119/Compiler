@@ -1,0 +1,10 @@
+#ifndef PROJECT_NONTERMINALSCREATOR_H
+#define PROJECT_NONTERMINALSCREATOR_H
+
+
+class NonTerminalsCreator {
+
+};
+
+
+#endif //PROJECT_NONTERMINALSCREATOR_H
