@@ -18,7 +18,7 @@ class Tokenizer {
     int _currentIndex;
 
 public:
-    explicit Tokenizer(const std::string& filePath, const std::unordered_set<std::shared_ptr<State>>& states);
+    explicit Tokenizer(const std::string& programFilePath, const std::string& tableFilePath);
     ~Tokenizer();
     std::string getNextToken();
     bool hasMoreTokens();

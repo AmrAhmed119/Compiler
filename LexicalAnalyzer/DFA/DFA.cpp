@@ -5,6 +5,8 @@
 #include <memory>
 #include <queue>
 #include <map>
+#include <fstream>
+#include <filesystem>
 #include <climits>
 
 std::vector<std::shared_ptr<State>> combineStates(std::shared_ptr<State> root);
@@ -21,6 +23,7 @@ std::unordered_map<std::shared_ptr<State>, int> mapStatesToGroup(const std::vect
 std::vector<std::vector<std::shared_ptr<State>>> computeNewGroups(const std::vector<std::vector<std::shared_ptr<State>>> &groups, const std::unordered_map<std::shared_ptr<State>, int> &stateToGroup);
 std::vector<int> computeStateTransitionsByGroupIds(const std::shared_ptr<State> &state, const std::unordered_map<std::shared_ptr<State>, int> &stateToGroup);
 std::unordered_set<std::shared_ptr<State>> createNewDFAFromGroups(const std::vector<std::vector<std::shared_ptr<State>>> &groups, std::unordered_map<std::shared_ptr<State>, int>);
+void printTransitionTable(std::unordered_set<std::shared_ptr<State>> states);
 
 int eps;
 
@@ -138,6 +141,38 @@ std::vector<std::shared_ptr<State>> move(std::vector<std::shared_ptr<State>> &co
 
 // Minimization Part
 
+// print the result minimization table to a file
+void printTransitionTable(std::unordered_set<std::shared_ptr<State>> states) {
+    std::ofstream outputFile("../LexicalAnalyzer/Outputs/transitionTable.txt", std::ios::out);
+    if (!outputFile) {
+        std::cerr << "Error: Unable to open output file \"transition_table\"." << std::endl;
+        return;
+    }
+
+    // create mapping for each state to its name
+    std::map<std::shared_ptr<State>, int> stateToName;
+    int i = 0, start = 0;
+    for (const auto &state: states) {
+        stateToName[state] = i++;
+        if (state->isStarting()) {
+            start = i - 1;
+        }
+    }
+
+    outputFile << "Transition table for the minimized DFA:\n\n";
+    outputFile << "Start Node: " << start << "\n\n";
+    outputFile << std::left << std::setw(20) << "State" << std::setw(20) << "Transition" << std::setw(20)
+               << "Next State"
+               << std::setw(20) << "Token Class" << "\n";
+    for (const auto &state: states) {
+        for (const auto &transition: state->getTransitions()) {
+            outputFile << std::left << std::setw(20) << stateToName[state] << std::setw(20) << transition.first
+                       << std::setw(20) << stateToName[transition.second[0]] << std::setw(20)
+                       << transition.second[0]->getTokenClass() << "\n";
+        }
+    }
+}
+
 // Main DFA Minimalization
 std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA()
 {
@@ -195,7 +230,11 @@ std::unordered_set<std::shared_ptr<State>> DFA::minimizeDFA()
     // STEP 4: Create the new DFA (new State represent each group)
     auto stateToGroup = mapStatesToGroup(groups);
 
-    return createNewDFAFromGroups(groups, stateToGroup);
+    auto newDFAStates = createNewDFAFromGroups(groups, stateToGroup);
+
+    printTransitionTable(newDFAStates);
+
+    return newDFAStates;
 }
 
 // Helper Function to Traverse the Graph

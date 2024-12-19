@@ -86,4 +86,10 @@ void printGraph(std::shared_ptr<State> root)
     }
 }
 
-
+void print(const char* message, bool isError) {
+    if (isError) {
+        std::cerr << message << std::endl;
+        return;
+    }
+    std::cout << message << std::endl;
+}

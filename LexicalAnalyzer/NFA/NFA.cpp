@@ -1,4 +1,8 @@
+#include <map>
+#include <fstream>
 #include "NFA.h"
+#include "../../LexicalAnalyzer/NFA/process_tokens.h"
+#include "../../LexicalAnalyzer/Utility/Util.h"
 
 // Constructor for NFA
 NFA::NFA() {
@@ -143,5 +147,128 @@ std::set<std::shared_ptr<State>> NFA::computeEpsilonClosure(const std::set<std::
     }
 
     return closure;
+}
+
+void NFA::processFile(const std::string &filename,std::map<std::string, std::set<char>> &nameToCharSet,std::set<int> &allChars) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    std::string name;
+    std::set<char> charSet;
+    int lineNumber = 1;
+
+    // Special characters to exclude unless preceded by a backslash
+    std::set<char> specialChars = {')', '(', '|', '*', '+', '='};
+
+    // Read each pair of lines
+    while (std::getline(file, line)) {
+        if (lineNumber % 2 != 0) {
+            // Odd lines: Treat this as a name (key)
+            name = line;
+        } else {
+            // Even lines: Process the line to create a set of characters
+            charSet.clear();        // Clear previous set
+            bool isEscaped = false; // Flag to track if the previous character was a backslash
+
+            for (size_t i = 0; i < line.size(); ++i) {
+                char c = line[i];
+
+                // If the current character is a backslash and the next one is a special char
+                if (c == '\\' && i + 1 < line.size() && specialChars.count(line[i + 1])) {
+                    // Mark as escaped
+                    isEscaped = true;
+                    continue; // Skip this iteration and the next special character will be added
+                }
+
+                // If the character is not special or it's escaped, add it
+                if (!specialChars.count(c) || (isEscaped && specialChars.count(c))) {
+                    if (!std::isspace(c)) {                       // Skip spaces if not needed
+                        charSet.insert(c);  // Insert valid characters into the set
+                        allChars.insert(c); // Add the character to the global set
+                    }
+                }
+
+                // Reset escape flag after processing
+                isEscaped = false;
+            }
+
+            // Add the name and its corresponding set of chars to the map
+            nameToCharSet[name] = charSet;
+        }
+        ++lineNumber;
+    }
+
+    file.close();
+}
+
+std::shared_ptr<State> NFA::getStartState(std::ifstream& file) {
+    std::string line;
+    int currentLine = 0;
+    int priority = 0;
+    std::vector<NFA> nfaList;
+
+    std::string tokenClass;
+    while (std::getline(file, line)) {
+        currentLine++;
+
+        // Odd lines contain token class names (skip them for now)
+        if (currentLine % 2 != 0) {
+            tokenClass = line;
+            continue;
+        }
+
+        // Even lines contain regex expressions
+        std::string regex = line;
+        try {
+            // Format the regex
+            std::string formattedRegex = formatRegEx(regex);
+
+            // Convert to postfix notation
+            std::string postfixRegex = infixToPostfix(formattedRegex);
+
+            // Build the NFA from the postfix regex
+            NFA nfa = buildNFAFromPostfix(postfixRegex);
+
+            // Set priorities for accepting states
+            for (auto &endState: nfa.endStates) {
+                endState->setPriority(priority);
+                endState->setTokenClass(tokenClass);
+                priority++;
+            }
+
+            // Add the NFA to the list
+            nfaList.push_back(nfa);
+        }
+        catch (const std::exception &e) {
+            print("Error: Could not process regex.", true);
+            return nullptr;
+        }
+    }
+
+    file.close();
+
+    // Combine all NFAs into one
+    NFA combinedNFA;
+
+    // Create a new common start state
+    auto commonStartState = std::make_shared<State>(true);
+    combinedNFA.states.insert(commonStartState);
+
+    for (auto &nfa: nfaList) {
+        // Add epsilon transitions from the common start state to each NFA's start state
+        combinedNFA.addTransition(commonStartState, '/l', nfa.startState);
+
+        // Merge the states of each NFA into the combined NFA
+        combinedNFA.mergeStates(nfa);
+    }
+
+    // Set the start state of the combined NFA
+    combinedNFA.startState = commonStartState;
+    combinedNFA.startState->setStartingState(true);
+    return combinedNFA.startState;
 }
 

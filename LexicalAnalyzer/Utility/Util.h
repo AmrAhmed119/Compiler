@@ -15,6 +15,7 @@ void removeConsecutiveSpaces(std::string& str);
 void removeSpaces(std::string& str);
 void removeFirstAndLastChars(std::string& str);
 void printGraph(std::shared_ptr<State> root);
+void print(const char* message, bool isError = false);
 
 
 #endif //COMPILER_UTIL_H

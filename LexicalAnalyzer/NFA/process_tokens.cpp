@@ -4,9 +4,6 @@
 #include <fstream>
 #include "NFA.h"
 #include "process_tokens.h"
-
-
-
 #include "NFA.h"
 #include <stack>
 #include <string>

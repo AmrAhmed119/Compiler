@@ -6,6 +6,7 @@
 #include <stack>
 #include <vector>
 #include <set>
+#include <map>
 #include <memory>
 #include "../Utility/State.h"
 #include <unordered_set>
@@ -44,6 +45,10 @@ public:
     void mergeStates(NFA &otherNFA); // Merge states from another NFA
     void addEpsilonTransition(std::shared_ptr<State> from, std::shared_ptr<State> to);
     std::unordered_map<std::shared_ptr<State>, std::set<std::shared_ptr<State>>> getEpsilonClosureSetMap() const;
+
+    void static processFile(const std::string &filename,std::map<std::string, std::set<char>> &nameToCharSet,std::set<int> &allChars);
+
+    std::shared_ptr<State> static getStartState(std::ifstream& file);
 };
 
 #endif // NFA_H
