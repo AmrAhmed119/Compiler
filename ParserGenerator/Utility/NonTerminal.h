@@ -17,7 +17,6 @@ private:
     std::map<Terminal, Production> _transitions; // Transition map for terminals to production
 
 public:
-
     // Constructor to initialize NonTerminal with a name
     explicit NonTerminal(const std::string& name);
 

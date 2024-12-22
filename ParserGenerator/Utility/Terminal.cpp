@@ -12,8 +12,3 @@ bool Terminal::getIsEpsilon() const {
 void Terminal::setIsEpsilon(bool value) {
     isEpsilon = value;
 }
-
-// Comparison operator for Terminal
-bool Terminal::operator<(const Terminal& other) const {
-    return this->getName() < other.getName();
-}

@@ -10,6 +10,8 @@
 #include "LexicalAnalyzer/DFA/DFA.h"
 #include "LexicalAnalyzer/Tokenizer/Tokenizer.h"
 #include "LexicalAnalyzer/Utility/Util.h"
+#include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
+#include "ParserGenerator/Utility/Util.h"
 
 void build() {
     print("STEP1 : Parsing rules...");
@@ -48,19 +50,33 @@ void run() {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 1) {
-        print("Error: Invalid number of arguments.", true);
-        return 1;
-    }
+//    if (argc < 1) {
+//        print("Error: Invalid number of arguments.", true);
+//        return 1;
+//    }
+//
+//    if (strcmp(argv[1], "--build") == 0) {
+//        print("Building NFA, DFA, minimized DFA...");
+//        build();
+//    } else if (strcmp(argv[1], "--run") == 0) {
+//        print("Running Tokenizer and Parser...");
+//        run();
+//    } else {
+//        print("Error: Invalid command.", true);
+//    }
 
-    if (strcmp(argv[1], "--build") == 0) {
-        print("Building NFA, DFA, minimized DFA...");
-        build();
-    } else if (strcmp(argv[1], "--run") == 0) {
-        print("Running Tokenizer and Parser...");
-        run();
-    } else {
-        print("Error: Invalid command.", true);
-    }
+//    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
+//    nonTerminalsCreator.readCFGFile();
+//    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
+//    for (const auto& line : grammarLines) {
+//        std::cout << line << std::endl;
+//    }
+
+    std::map<std::string, Symbol*> symbols;
+    NonTerminal nt("amr");
+    symbols["amr"] = &nt;
+
+    auto* nt2 = dynamic_cast<NonTerminal*>(symbols["amr"]);
+    std::cout << nt2->x << std::endl;
 }
 

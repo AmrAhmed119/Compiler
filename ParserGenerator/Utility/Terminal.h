@@ -19,8 +19,6 @@ public:
     // Setter for isEpsilon
     void setIsEpsilon(bool value);
 
-    // Comparison operator
-    bool operator<(const Terminal& other) const;
 };
 
 #endif //PROJECT_TERMINAL_H

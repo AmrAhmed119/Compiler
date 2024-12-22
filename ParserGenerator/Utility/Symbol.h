@@ -12,6 +12,9 @@ public:
     // Default constructor
     Symbol() = default;
 
+    // Virtual destructor
+    virtual ~Symbol() = default;
+
     // Constructor to initialize the name
     explicit Symbol(const std::string& name);
 
@@ -20,6 +23,8 @@ public:
 
     // Setter for name
     void setName(const std::string& newName);
+
+    bool operator<(const Symbol& other) const;
 };
 
 
