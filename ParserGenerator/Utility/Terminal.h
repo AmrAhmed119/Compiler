@@ -18,7 +18,6 @@ public:
 
     // Setter for isEpsilon
     void setIsEpsilon(bool value);
-
 };
 
 #endif //PROJECT_TERMINAL_H
