@@ -22,6 +22,9 @@ public:
 
     // Setter for name
     void setName(const std::string& newName);
+
+    // Comparison operator
+    bool operator<(const Symbol& other) const;
 };
 
 

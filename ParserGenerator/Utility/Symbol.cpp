@@ -12,3 +12,8 @@ const std::string& Symbol::getName() const {
 void Symbol::setName(const std::string& newName) {
     _name = newName;
 }
+
+// Comparison operator for Terminal
+bool Symbol::operator<(const Symbol& other) const {
+    return this->getName() < other.getName();
+}
