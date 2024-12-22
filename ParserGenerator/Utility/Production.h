@@ -3,29 +3,30 @@
 
 
 #include <vector>
+#include <memory>
 #include "Symbol.h"
 
 class Production {
 private:
     // store symbols of the production
     // Ex: A -> aBc => _symbols = {a, B, c}
-    std::vector<Symbol> _symbols;
+    std::vector<std::shared_ptr<Symbol>> _symbols;
 
 public:
     // Default constructor
     Production();
 
     // Constructor to initialize with a list of symbols
-    explicit Production(const std::vector<Symbol>& symbols);
+    explicit Production(const std::vector<std::shared_ptr<Symbol>>& symbols);
 
     // Getter for symbols
-    const std::vector<Symbol>& getSymbols() const;
+    const std::vector<std::shared_ptr<Symbol>>& getSymbols() const;
 
     // Setter for symbols
-    void setSymbols(const std::vector<Symbol>& newSymbols);
+    void setSymbols(const std::vector<std::shared_ptr<Symbol>>& newSymbols);
 
     // Method to add a symbol to the list
-    void addSymbol(const Symbol& symbol);
+    void addSymbol(const std::shared_ptr<Symbol>& symbol);
 
     // Method to clear all symbols
     void clearSymbols();
