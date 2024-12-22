@@ -4,24 +4,28 @@
 Production::Production() = default;
 
 // Constructor to initialize with a list of symbols
-Production::Production(const std::vector<Symbol>& symbols) : _symbols(symbols) {}
+Production::Production(std::vector<std::shared_ptr<Symbol >> &symbols) : _symbols(symbols) {}
 
 // Getter for symbols
-const std::vector<Symbol>& Production::getSymbols() const {
+const std::vector<std::shared_ptr<Symbol >> &Production::getSymbols() const
+{
     return _symbols;
 }
 
 // Setter for symbols
-void Production::setSymbols(const std::vector<Symbol>& newSymbols) {
+void Production::setSymbols(std::vector<std::shared_ptr<Symbol >> &newSymbols)
+{
     _symbols = newSymbols;
 }
 
 // Method to add a symbol to the list
-void Production::addSymbol(const Symbol& symbol) {
+void Production::addSymbol(std::shared_ptr<Symbol >symbol)
+{
     _symbols.push_back(symbol);
 }
 
 // Method to clear all symbols
-void Production::clearSymbols() {
+void Production::clearSymbols()
+{
     _symbols.clear();
 }

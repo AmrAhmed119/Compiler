@@ -11,6 +11,8 @@ private:
 public:
     // Default constructor
     Symbol() = default;
+    
+    virtual ~Symbol() = default; 
 
     // Constructor to initialize the name
     explicit Symbol(const std::string& name);

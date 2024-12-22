@@ -1,59 +1,58 @@
 #ifndef PROJECT_NONTERMINAL_H
 #define PROJECT_NONTERMINAL_H
 
-
 #include <vector>
 #include <set>
 #include <map>
 #include "Symbol.h"
 #include "Production.h"
 #include "Terminal.h"
+#include <memory>
 
-class NonTerminal : public Symbol {
+class NonTerminal : public Symbol
+{
 private:
-    std::vector<Production> _productions;  // A vector of productions
-    std::vector<std::set<Terminal>> _first; // First sets for each production
-    std::set<Terminal> _follow; // Follow set for the non-terminal
-    std::map<Terminal, Production> _transitions; // Transition map for terminals to production
+    std::vector<std::shared_ptr<Production>> _productions;                         // A vector of productions
+    std::vector<std::set<std::shared_ptr<Terminal>>> _first;                       // First sets for each production
+    std::set<std::shared_ptr<Terminal>> _follow;                                   // Follow set for the non-terminal
+    std::map<std::shared_ptr<Terminal>, std::shared_ptr<Production>> _transitions; // Transition map for terminals to production
 
 public:
-
     // Constructor to initialize NonTerminal with a name
-    explicit NonTerminal(const std::string& name);
+    explicit NonTerminal(const std::string &name);
 
     // Constructor to initialize NonTerminal with a name and a set of productions
-    NonTerminal(const std::string& name, const std::vector<Production>& productions);
+    NonTerminal(const std::string &name, const std::vector<std::shared_ptr<Production>> &productions);
 
     // Getter for productions
-    const std::vector<Production>& getProductions() const;
+    const std::vector<std::shared_ptr<Production>> &getProductions() const;
 
     // Setter for productions
-    void setProductions(const std::vector<Production>& productions);
+    void setProductions(const std::vector<std::shared_ptr<Production>> &productions);
 
     // Getter for first set
-    const std::vector<std::set<Terminal>>& getFirst() const;
+    const std::vector<std::set<std::shared_ptr<Terminal>>> &getFirst() const;
 
     // Setter for first set
-    void setFirst(const std::vector<std::set<Terminal>>& first);
+    void setFirst(const std::vector<std::set<std::shared_ptr<Terminal>>> &first);
 
     // Getter for follow set
-    const std::set<Terminal>& getFollow() const;
+    const std::set<std::shared_ptr<Terminal>> &getFollow() const;
 
     // Setter for follow set
-    void setFollow(const std::set<Terminal>& follow);
+    void setFollow(const std::set<std::shared_ptr<Terminal>> &follow);
 
     // Getter for transitions map
-    const std::map<Terminal, Production>& getTransitions() const;
+    const std::map<std::shared_ptr<Terminal>, std::shared_ptr<Production>> &getTransitions() const;
 
     // Setter for transitions map
-    void setTransitions(const std::map<Terminal, Production>& transitions);
+    void setTransitions(const std::map<std::shared_ptr<Terminal>, std::shared_ptr<Production>> &transitions);
 
     // Method to add a production
-    void addProduction(const Production& production);
+    void addProduction(std::shared_ptr<Production> production);
 
     // Method to add a transition
-    void addTransition(const Terminal& terminal, const Production& production);
+    void addTransition(std::shared_ptr<Terminal> terminal, std::shared_ptr<Production> production);
 };
 
-
-#endif //PROJECT_NONTERMINAL_H
+#endif // PROJECT_NONTERMINAL_H
