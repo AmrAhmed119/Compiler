@@ -12,6 +12,9 @@ public:
     // Default constructor
     Symbol() = default;
 
+    // Destructor
+    virtual ~Symbol() = default;
+
     // Constructor to initialize the name
     explicit Symbol(const std::string& name);
 
