@@ -1,6 +1,6 @@
 #include <sstream>
 #include "Tokenizer.h"
-#include <Algorithm>
+#include <algorithm>
 #include "../../LexicalAnalyzer/Utility/Util.h"
 
 std::unordered_set<std::shared_ptr<State>> readTransitionTable(const std::string &filePath);

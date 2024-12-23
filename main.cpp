@@ -13,7 +13,17 @@
 #include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
 #include "ParserGenerator/Utility/Util.h"
 
-void build() {
+#include <map>
+#include <string>
+#include "ParserGenerator/Utility/Terminal.h"
+#include "ParserGenerator/Utility/NonTerminal.h"
+#include "ParserGenerator/Utility/Production.h"
+#include <vector>
+#include <iostream>
+#include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
+
+void build()
+{
     print("STEP1 : Parsing rules...");
     RulesParser rulesParser(rulesPath);
     if (rulesParser.parseFile() == -1) {
@@ -72,4 +82,3 @@ int main(int argc, char* argv[]) {
         print("Error: Invalid command.", true);
     }
 }
-

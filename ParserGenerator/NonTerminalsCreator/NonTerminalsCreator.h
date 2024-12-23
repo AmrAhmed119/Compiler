@@ -28,7 +28,10 @@ public:
     std::shared_ptr<NonTerminal> getStartingNonTerminal();
     std::vector<std::string> getGrammarLines();
     static void printNonTerminals(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals);
+    void createFirst(std::map<std::string, std::shared_ptr<NonTerminal >> &nonTerminals);
+    void createFollow(std::map<std::string, std::shared_ptr<NonTerminal >> &nonTerminals);
 };
 
 
 #endif //PROJECT_NONTERMINALSCREATOR_H
+
