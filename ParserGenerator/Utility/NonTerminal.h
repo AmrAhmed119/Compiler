@@ -39,12 +39,6 @@ public:
     // Setter for isStarting
     void setIsStarting(bool starting);
 
-    // Getter for isStarting
-    bool getIsStarting() const;
-
-    // Setter for isStarting
-    void setIsStarting(bool starting);
-
     // Setter for first set
     void setFirst(const std::vector<std::set<std::shared_ptr<Terminal>>> &first);
 
