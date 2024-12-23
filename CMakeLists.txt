@@ -26,8 +26,8 @@ add_executable(Project main.cpp
         ParserGenerator/Utility/NonTerminal.h
         ParserGenerator/Utility/Util.cpp
         ParserGenerator/Utility/Util.h
-        ParserGenerator/DerivationGenerator/DerivationGenerator.cpp
-        ParserGenerator/DerivationGenerator/DerivationGenerator.h
+        ParserGenerator/TopDownParser/TopDownParser.cpp
+        ParserGenerator/TopDownParser/TopDownParser.h
         ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.cpp
         ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h
         ParserGenerator/ParserTable/ParserTable.cpp
