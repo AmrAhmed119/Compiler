@@ -10,6 +10,8 @@
 #include "LexicalAnalyzer/DFA/DFA.h"
 #include "LexicalAnalyzer/Tokenizer/Tokenizer.h"
 #include "LexicalAnalyzer/Utility/Util.h"
+#include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
+#include "ParserGenerator/Utility/Util.h"
 
 void build() {
     print("STEP1 : Parsing rules...");
@@ -40,11 +42,18 @@ void build() {
 }
 
 void run() {
-    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
-    Tokenizer tokenizer(programPath, tableFilePath);
-    performTokenization();
+//    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
+//    Tokenizer tokenizer(programPath, tableFilePath);
+//    performTokenization();
 
-    std::cout << "STEP6 : Starting Parser..." << std::endl;
+    std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
+    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
+    nonTerminalsCreator.readCFGFile();
+    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
+
+    print("STEP7 : Printing nonTerminals...");
+    std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
+    NonTerminalsCreator::printNonTerminals(nonTerminals);
 }
 
 int main(int argc, char* argv[]) {

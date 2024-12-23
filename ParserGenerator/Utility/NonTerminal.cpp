@@ -1,11 +1,11 @@
 #include "NonTerminal.h"
 
 // Constructor to initialize NonTerminal with a name
-NonTerminal::NonTerminal(const std::string& name) : Symbol(name) {}
+NonTerminal::NonTerminal(const std::string& name, bool isStarting) : Symbol(name), isStarting(isStarting) {}
 
 // Constructor to initialize NonTerminal with a name and a set of productions
-NonTerminal::NonTerminal(const std::string& name, const std::vector<std::shared_ptr<Production>>& productions)
-        : Symbol(name), _productions(productions) {}
+NonTerminal::NonTerminal(const std::string& name, const std::vector<std::shared_ptr<Production>>& productions, bool isStarting)
+        : Symbol(name), _productions(productions), isStarting(isStarting) {}
 
 // Getter for productions
 const std::vector<std::shared_ptr<Production>>& NonTerminal::getProductions() const {
@@ -40,6 +40,16 @@ void NonTerminal::setFollow(const std::set<std::shared_ptr<Terminal>>& follow) {
 // Getter for transitions map
 const std::map<std::shared_ptr<Terminal>, std::shared_ptr<Production>>& NonTerminal::getTransitions() const {
     return _transitions;
+}
+
+// Getter for isStarting
+bool NonTerminal::getIsStarting() const {
+    return isStarting;
+}
+
+// Setter for isStarting
+void NonTerminal::setIsStarting(bool starting) {
+    isStarting = starting;
 }
 
 // Setter for transitions map
