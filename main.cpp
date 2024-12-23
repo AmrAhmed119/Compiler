@@ -42,41 +42,34 @@ void build() {
 }
 
 void run() {
-    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
-    Tokenizer tokenizer(programPath, tableFilePath);
-    performTokenization();
+//    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
+//    Tokenizer tokenizer(programPath, tableFilePath);
+//    performTokenization();
 
-    std::cout << "STEP6 : Starting Parser..." << std::endl;
+    std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
+    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
+    nonTerminalsCreator.readCFGFile();
+    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
+
+    print("STEP7 : Printing nonTerminals...");
+    std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
+    NonTerminalsCreator::printNonTerminals(nonTerminals);
 }
 
 int main(int argc, char* argv[]) {
-//    if (argc < 1) {
-//        print("Error: Invalid number of arguments.", true);
-//        return 1;
-//    }
-//
-//    if (strcmp(argv[1], "--build") == 0) {
-//        print("Building NFA, DFA, minimized DFA...");
-//        build();
-//    } else if (strcmp(argv[1], "--run") == 0) {
-//        print("Running Tokenizer and Parser...");
-//        run();
-//    } else {
-//        print("Error: Invalid command.", true);
-//    }
+    if (argc < 1) {
+        print("Error: Invalid number of arguments.", true);
+        return 1;
+    }
 
-//    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
-//    nonTerminalsCreator.readCFGFile();
-//    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
-//    for (const auto& line : grammarLines) {
-//        std::cout << line << std::endl;
-//    }
-
-    std::map<std::string, Symbol*> symbols;
-    NonTerminal nt("amr");
-    symbols["amr"] = &nt;
-
-    auto* nt2 = dynamic_cast<NonTerminal*>(symbols["amr"]);
-    std::cout << nt2->x << std::endl;
+    if (strcmp(argv[1], "--build") == 0) {
+        print("Building NFA, DFA, minimized DFA...");
+        build();
+    } else if (strcmp(argv[1], "--run") == 0) {
+        print("Running Tokenizer and Parser...");
+        run();
+    } else {
+        print("Error: Invalid command.", true);
+    }
 }
 

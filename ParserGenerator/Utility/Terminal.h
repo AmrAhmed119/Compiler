@@ -11,7 +11,7 @@ private:
 public:
 
     // Constructor to initialize isEpsilon
-    explicit Terminal(const std::string& name, bool isEpsilon);
+    explicit Terminal(const std::string& name, bool isEpsilon = false);
 
     // Getter for isEpsilon
     bool getIsEpsilon() const;
