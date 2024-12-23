@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     //     print("Error: Invalid command.", true);
     // }
     std::map<std::string, std::shared_ptr<NonTerminal>> nonterminals;
-    std::shared_ptr<NonTerminal> s = std::make_shared<NonTerminal>("s");
+    std::shared_ptr<NonTerminal> s = std::make_shared<NonTerminal>("s", true);
     std::shared_ptr<NonTerminal> r = std::make_shared<NonTerminal>("r");
     std::shared_ptr<NonTerminal> u = std::make_shared<NonTerminal>("u");
     std::shared_ptr<NonTerminal> v = std::make_shared<NonTerminal>("v");
@@ -140,17 +140,14 @@ int main(int argc, char *argv[])
 
     std::shared_ptr<NonTerminalsCreator> nonterminalsCreator = std::make_shared<NonTerminalsCreator>();
     nonterminalsCreator->createFirst(nonterminals);
+    nonterminalsCreator->createFollow(nonterminals);
     for (auto nt : nonterminals)
     {
         std::shared_ptr<NonTerminal> nonterminal = nt.second;
-        std::cout << "Starts of " << nonterminal->getName() << "\n";
-        for (std::set<std::shared_ptr<Terminal>> setTer : nonterminal->getFirst())
+        std::cout << "Follows of " << nonterminal->getName() << "\n";
+        for (std::shared_ptr<Terminal> ter : nonterminal->getFollow())
         {
-            for (std::shared_ptr<Terminal> ter : setTer)
-            {
-                std::cout << ter->getName() << " ";
-            }
-            std::cout << "\n";
+            std::cout << ter->getName() << " ";
         }
         std::cout << "\n";
     }

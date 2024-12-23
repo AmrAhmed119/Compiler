@@ -7,7 +7,6 @@
 #include "Symbol.h"
 #include "Production.h"
 #include "Terminal.h"
-#include <memory>
 
 class NonTerminal : public Symbol
 {
@@ -16,13 +15,14 @@ private:
     std::vector<std::set<std::shared_ptr<Terminal>>> _first;                       // First sets for each production
     std::set<std::shared_ptr<Terminal>> _follow;                                   // Follow set for the non-terminal
     std::map<std::shared_ptr<Terminal>, std::shared_ptr<Production>> _transitions; // Transition map for terminals to production
+    bool isStarting;                                                               // Attribute to store whether the non-terminal is the starting non-terminal or not
 
 public:
     // Constructor to initialize NonTerminal with a name
-    explicit NonTerminal(const std::string &name);
+    explicit NonTerminal(const std::string &name, bool isStarting = false);
 
     // Constructor to initialize NonTerminal with a name and a set of productions
-    NonTerminal(const std::string &name, const std::vector<std::shared_ptr<Production>> &productions);
+    NonTerminal(const std::string &name, const std::vector<std::shared_ptr<Production>> &productions, bool isStarting);
 
     // Getter for productions
     const std::vector<std::shared_ptr<Production>> &getProductions() const;
@@ -32,6 +32,12 @@ public:
 
     // Getter for first set
     const std::vector<std::set<std::shared_ptr<Terminal>>> &getFirst() const;
+
+    // Getter for isStarting
+    bool getIsStarting() const;
+
+    // Setter for isStarting
+    void setIsStarting(bool starting);
 
     // Setter for first set
     void setFirst(const std::vector<std::set<std::shared_ptr<Terminal>>> &first);
