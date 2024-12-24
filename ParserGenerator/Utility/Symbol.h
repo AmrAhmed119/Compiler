@@ -10,8 +10,6 @@ private:
     bool isSync; // Attribute to store whether the terminal is sync
 
 public:
-    // Default constructor
-    Symbol() = default;
 
     // Destructor
     virtual ~Symbol() = default;
@@ -22,13 +20,14 @@ public:
     // Constructor to initialize the name and isSync
     Symbol(const std::string& name, bool isSync);
 
+
     // Getter for name
     const std::string &getName() const;
 
     // Getter for isSync
     bool getIsSync() const;
 
-    // Setter for name
+
     void setName(const std::string &newName);
 
     // Comparison operator

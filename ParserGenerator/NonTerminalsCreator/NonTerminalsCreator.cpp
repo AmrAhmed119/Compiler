@@ -162,7 +162,7 @@ std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals()
         processNonTerminal(_grammarLines[i], i == 0);
     }
     auto nonTerminalsMap = getNonTerminalsMap(getNonTerminals());
-    createFirst(nonTerminalsMap);
+    //createFirst(nonTerminalsMap);
 //    createFollow(nonTerminalsMap);
     return getNonTerminals();
 }
