@@ -11,7 +11,6 @@
 
 class NonTerminalsCreator {
 private:
-    std::map<std::string, std::shared_ptr<Symbol>> symbols;
     std::vector<std::string> _grammarLines;
     std::string CFGFilePath;
     std::shared_ptr<NonTerminal> createNonTerminalOrGetIfExists(const std::string& name);
@@ -21,6 +20,8 @@ private:
     std::set<std::shared_ptr<NonTerminal>> getNonTerminals();
 
 public:
+    std::map<std::string, std::shared_ptr<Symbol>> symbols;
+
     ~NonTerminalsCreator() = default;
     explicit NonTerminalsCreator(std::string CFGFilePath);
     void readCFGFile();

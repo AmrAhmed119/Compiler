@@ -13,7 +13,7 @@
 class TopDownParser {
 private:
     // Map of NonTerminals with their respective data
-    std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalMap;
+    std::map<std::string, std::shared_ptr<Symbol>> nonTerminalMap;
 
     // List of non-terminal strings
     std::vector<std::string> nonTerminals;
@@ -60,7 +60,7 @@ public:
      * @param tokenizer The tokenizer to generate input tokens.
      */
     TopDownParser(
-            std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalMap,
+            std::map<std::string, std::shared_ptr<Symbol>> nonTerminalMap,
         std::vector<std::string> nonTerminals,
         Tokenizer& tokenizer);
 

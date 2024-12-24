@@ -62,6 +62,7 @@ void run() {
     std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
     NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
     nonTerminalsCreator.readCFGFile();
+
     std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
 
     std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
@@ -83,7 +84,10 @@ void run() {
     for (const auto& nonTerminal : nonTerminals) {
         nonTerminalsNames.push_back(nonTerminal->getName());
     }
-    TopDownParser topDownParser(hussienMap,nonTerminalsNames,tokenizer);
+
+
+
+    TopDownParser topDownParser(nonTerminalsCreator.symbols,nonTerminalsNames,tokenizer);
     std::vector<std::string> output = topDownParser.parse();
     print("STEP9 : Parsing completed successfully.");
 
