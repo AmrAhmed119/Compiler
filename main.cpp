@@ -22,6 +22,7 @@
 #include <iostream>
 #include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
 #include "ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.h"
+#include "ParserGenerator/ParserTable/ParserTable.h"
 
 void build()
 {
@@ -65,6 +66,16 @@ void run() {
     std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
     print("STEP7 : Printing nonTerminals...");
     NonTerminalsCreator::printNonTerminals(nonTerminals);
+
+    std::map<std::string, std::shared_ptr<NonTerminal>> hussienMap;
+    for (const auto& nonTerminal : nonTerminals) {
+        hussienMap[nonTerminal->getName()] = nonTerminal;
+    }
+
+    ParserTable parserTable(hussienMap);
+    parserTable.parserTableCreator();
+    parserTable.printTable(parseTableFilePath);
+
 }
 
 int main(int argc, char* argv[]) {

@@ -8,10 +8,10 @@
 class ParserTable {
 public:
 
-    std::map<std::string,NonTerminal> nonTerminals;
+    std::map<std::string,std::shared_ptr<NonTerminal>> nonTerminals;
 
     // Constructor
-    ParserTable(std::map<std::string,NonTerminal>& nonTerminals);
+    ParserTable(std::map<std::string,std::shared_ptr<NonTerminal>>& nonTerminals);
 
     void parserTableCreator();
 

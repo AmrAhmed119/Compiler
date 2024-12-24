@@ -7,7 +7,8 @@ std::set<std::shared_ptr<NonTerminal>> convertToSet(std::vector<std::shared_ptr<
 
 std::set<std::shared_ptr<NonTerminal>> convertToSet(std::vector<std::shared_ptr<NonTerminal>> &nonTerminals) {
     std::set<std::shared_ptr<NonTerminal>> nonTerminalSet;
-    for (const auto &nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
         nonTerminalSet.insert(nonTerminal);
     }
     return nonTerminalSet;
@@ -144,8 +145,14 @@ void LL1GrammarConverter::solveNonImmediateLeftRecursion(std::shared_ptr<NonTerm
 }
 
 void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal> &nonTerminal) {
-    nonTerminal->sortProductions();
+//    nonTerminal->sortProductions();
+    if (!nonTerminal) {
+        return;
+    }
+
     auto productions = nonTerminal->getProductions();
+
+    std::cout << "Non-terminal: " << nonTerminal->getName() << std::endl;
 
     std::map<std::string, std::vector<std::shared_ptr<Production>>> productionMap;
     for (const auto &production : productions) {
@@ -170,10 +177,8 @@ void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal
                     newNonTerminal->addProduction(newProduction);
                 }
             }
-            std::cout << nonTerminal->getName() << std::endl;
             newNonTerminals.push_back(newNonTerminal);
 //            nonTerminals.push_back(newNonTerminal);
-            std::cout << nonTerminal->getName() << std::endl;
             auto symbol = commonProductions[0]->getSymbols()[0];
             std::shared_ptr<Production> newProductionForBaseNonTerminal = std::make_shared<Production>();
             newProductionForBaseNonTerminal->addSymbol(symbol);
@@ -185,7 +190,7 @@ void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal
     }
 
     nonTerminal->setProductions(newProductions);
-    for (auto a : newNonTerminals) {
+    for (auto &a : newNonTerminals) {
         nonTerminals.push_back(a);
     }
 }

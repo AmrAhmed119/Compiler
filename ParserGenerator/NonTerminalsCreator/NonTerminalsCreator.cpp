@@ -7,6 +7,7 @@
 #include "NonTerminalsCreator.h"
 #include "../../LexicalAnalyzer/Utility/Util.h"
 #include "../Utility/Util.h"
+#include "LL1GrammarConverter.h"
 
 const std::string EPSILON = "\\L";
 
@@ -161,9 +162,14 @@ std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals()
     for (int i = 0; i < _grammarLines.size(); i++) {
         processNonTerminal(_grammarLines[i], i == 0);
     }
-    auto nonTerminalsMap = getNonTerminalsMap(getNonTerminals());
-    //createFirst(nonTerminalsMap);
-//    createFollow(nonTerminalsMap);
+
+    auto nonTerminalsSet = getNonTerminals();
+//    LL1GrammarConverter ll1GrammarConverter(nonTerminalsSet);
+//    auto newNonTerminalsSet = ll1GrammarConverter.convertToLL1();
+
+    auto nonTerminalsMap = getNonTerminalsMap(nonTerminalsSet);
+    createFirst(nonTerminalsMap);
+    createFollow(nonTerminalsMap);
     return getNonTerminals();
 }
 
@@ -202,6 +208,27 @@ void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTe
         }
         std::cout << std::endl;
     }
+
+    // print the first and the follow for each non terminal
+    for (const auto& nonTerminal : nonTerminals) {
+        std::cout << "First of " << nonTerminal->getName() << ": ";
+        for (const auto& firstSet : nonTerminal->getFirst()) {
+            for (const auto& terminal : firstSet) {
+                std::cout << terminal->getName() << " ";
+            }
+            std::cout << "| ";
+        }
+        std::cout << std::endl;
+    }
+
+    for (const auto& nonTerminal : nonTerminals) {
+        std::cout << "Follow of " << nonTerminal->getName() << ": ";
+        for (const auto& terminal : nonTerminal->getFollow()) {
+            std::cout << terminal->getName() << " ";
+        }
+        std::cout << std::endl;
+    }
+
 }
 
 void NonTerminalsCreator::createFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals)
@@ -219,12 +246,13 @@ std::vector<std::set<std::shared_ptr<Terminal>>> calcFirstOfNT(std::shared_ptr<N
     std::vector<std::set<std::shared_ptr<Terminal>>> firstsOfNt;
     if (!nt->getFirst().empty())
         firstsOfNt = nt->getFirst();
-    else
-        for (std::shared_ptr<Production> production : nt->getProductions())
-        {
+    else {
+        for (std::shared_ptr<Production> production: nt->getProductions()) {
             std::set<std::shared_ptr<Terminal>> firstOfProduction = calcFirstOfProduction(production);
             firstsOfNt.push_back(firstOfProduction);
         }
+        nt->setFirst(firstsOfNt);
+    }
     return firstsOfNt;
 }
 
@@ -234,6 +262,7 @@ std::set<std::shared_ptr<Terminal>> calcFirstOfProduction(std::shared_ptr<Produc
 
     for (std::shared_ptr<Symbol> symbol : production->getSymbols())
     {
+        removeEpsFromSet(firstOfProduction);
         // Use std::dynamic_pointer_cast for casting shared_ptr
         if (std::shared_ptr<Terminal> terminal = std::dynamic_pointer_cast<Terminal>(symbol))
         {
@@ -357,7 +386,6 @@ void addFollows(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminal
 {
     for (auto nonTerminal : nonTerminals)
     {
-        addDollarForStart(nonTerminal.second);
         for (std::shared_ptr<Production> production : nonTerminal.second->getProductions())
             addFollowForProduction(production, nonTerminal.second);
     }

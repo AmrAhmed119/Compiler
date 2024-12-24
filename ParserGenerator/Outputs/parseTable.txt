@@ -1,2 +1,27 @@
-Parse Table:
-
+NonTerminal: E
+Terminal: ( Production: T EE 
+Terminal: ) Production: sync 
+Terminal: $ Production: sync 
+Terminal: id Production: T EE 
+NonTerminal: EE
+Terminal: + Production: + T EE 
+Terminal: ) Production: \L 
+Terminal: $ Production: \L 
+NonTerminal: F
+Terminal: + Production: sync 
+Terminal: * Production: sync 
+Terminal: ( Production: ( E ) 
+Terminal: ) Production: sync 
+Terminal: $ Production: sync 
+Terminal: id Production: id 
+NonTerminal: T
+Terminal: + Production: sync 
+Terminal: ( Production: F TT 
+Terminal: ) Production: sync 
+Terminal: $ Production: sync 
+Terminal: id Production: F TT 
+NonTerminal: TT
+Terminal: + Production: \L 
+Terminal: * Production: * F TT 
+Terminal: ) Production: \L 
+Terminal: $ Production: \L 
