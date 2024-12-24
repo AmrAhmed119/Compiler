@@ -170,6 +170,8 @@ std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals()
     auto nonTerminalsMap = getNonTerminalsMap(nonTerminalsSet);
     createFirst(nonTerminalsMap);
     createFollow(nonTerminalsMap);
+    for(auto item : nonTerminalsMap)
+        symbols.insert({item.first, item.second});
     return getNonTerminals();
 }
 

@@ -139,8 +139,11 @@ std::string Tokenizer::getNextToken() {
             _currentWords = _reader.readLine();
         }
     }
+    if (tokenClass[0] == '\\') {
+        tokenClass = tokenClass.substr(1);
+    }
 
-    return token;
+    return tokenClass;
 }
 
 bool Tokenizer::hasMoreTokens() {

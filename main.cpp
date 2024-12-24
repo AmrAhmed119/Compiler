@@ -57,7 +57,6 @@ void build()
 void run() {
     std::cout << "STEP5 : Starting Token extraction..." << std::endl;
     Tokenizer tokenizer(programPath, tableFilePath);
-    performTokenization();
 
     std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
     NonTerminalsCreator nonTerminalsCreator(CFGFilePath);

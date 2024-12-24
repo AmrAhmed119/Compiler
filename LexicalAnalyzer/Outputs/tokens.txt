@@ -1,25 +1,19 @@
 Tokenization results for the input program:
 
-(
 id
-+
-(
-*
-id
-)
+assign
+num
+;
 
 
 Tokenization results in detail:
 
-Token: (            Class: \(           
-Token: id           Class: id           
-Token: +            Class: addop        
-Token: (            Class: \(           
-Token: *            Class: mulop        
-Token: id           Class: id           
-Token: )            Class: \)           
+Token: x            Class: id           
+Token: =            Class: assign       
+Token: 5            Class: num          
+Token: ;            Class: ;            
 
 
 Symbol Table:
 
-variable-name: id                       Class: id           
+variable-name: x                        Class: id           

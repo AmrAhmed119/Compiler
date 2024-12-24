@@ -14,7 +14,15 @@ TopDownParser::TopDownParser(
     while (tokenizer.hasMoreTokens()) {
         input.push(tokenizer.getNextToken());
     }
-    stk.push(this->nonTerminals[0]); // Push the starting non-terminal
+    input.push("$");
+    auto start = this->nonTerminals[0];
+    for (const auto &[_, symbol] : this->nonTerminalMap) {
+        if (auto nt = std::dynamic_pointer_cast<NonTerminal>(symbol); nt) {
+            start = nt->getIsStarting() ? nt->getName() : start;
+        }
+    }
+    stk.push("$");
+    stk.push(start); // Push the starting non-terminal
 }
 
 std::vector<std::string> TopDownParser::parse() {
@@ -26,6 +34,9 @@ std::vector<std::string> TopDownParser::parse() {
         std::string currentInput = input.front();
 
         if (isTerminal(top)) {
+            if (top == "\\L") {
+                continue;
+            }
             // Terminal handling
             if (top == currentInput) {
                 output.push_back(top);
@@ -49,7 +60,7 @@ std::vector<std::string> TopDownParser::parse() {
             // Find production rule
             const auto& transitions = nonTerminalObj->getTransitions();
 
-            auto ter = std::dynamic_pointer_cast<Terminal>(nonTerminalMap[currentInput]);
+            auto ter = std::dynamic_pointer_cast<Terminal>(this->nonTerminalMap[currentInput]);
             auto productionIt = transitions.find(ter);
             if (productionIt == transitions.end()) {
                 // No valid production rule for this input
