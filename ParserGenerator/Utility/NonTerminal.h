@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include "algorithm"
 #include "Symbol.h"
 #include "Production.h"
 #include "Terminal.h"
@@ -59,6 +60,8 @@ public:
 
     // Method to add a transition
     void addTransition(const std::shared_ptr<Terminal> &terminal, const std::shared_ptr<Production> &production);
+
+    void sortProductions();
 };
 
 #endif // PROJECT_NONTERMINAL_H

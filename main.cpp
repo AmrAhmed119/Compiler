@@ -21,6 +21,7 @@
 #include <vector>
 #include <iostream>
 #include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
+#include "ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.h"
 
 void build()
 {

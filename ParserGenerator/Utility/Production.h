@@ -29,6 +29,8 @@ public:
     // Method to add a symbol to the list
     void addSymbol(const std::shared_ptr<Symbol> &symbol);
 
+    std::string getFirstSymbolName() const;
+
     // Method to clear all symbols
     void clearSymbols();
 };
