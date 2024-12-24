@@ -30,6 +30,8 @@ add_executable(Project main.cpp
         ParserGenerator/DerivationGenerator/DerivationGenerator.h
         ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.cpp
         ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h
+        ParserGenerator/NonTerminalsCreator/FirstFollowCreator.cpp
+        ParserGenerator/NonTerminalsCreator/FirstFollowCreator.h
         ParserGenerator/ParserTable/ParserTable.cpp
         ParserGenerator/ParserTable/ParserTable.h
 )
