@@ -5,15 +5,16 @@
 #include <algorithm>
 
 TopDownParser::TopDownParser(
-    std::map<std::string, NonTerminal> nonTerminalMap, 
+        std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalMap,
     std::vector<std::string> nonTerminals, 
-    Tokenizer tokenizer)
+    Tokenizer& tokenizer)
     : nonTerminalMap(std::move(nonTerminalMap)), 
       nonTerminals(std::move(nonTerminals)), 
       input(), stk() {
     while (tokenizer.hasMoreTokens()) {
         input.push(tokenizer.getNextToken());
     }
+    stk.push(this->nonTerminals[0]); // Push the starting non-terminal
 }
 
 std::vector<std::string> TopDownParser::parse() {
@@ -43,10 +44,10 @@ std::vector<std::string> TopDownParser::parse() {
                 continue; // Skip and move on
             }
 
-            NonTerminal& nonTerminalObj = nonTerminalIt->second;
+            std::shared_ptr<NonTerminal> nonTerminalObj = nonTerminalIt->second;
 
             // Find production rule
-            const auto& transitions = nonTerminalObj.getTransitions();
+            const auto& transitions = nonTerminalObj->getTransitions();
             auto productionIt = transitions.find(std::make_shared<Terminal>(currentInput, false));
             if (productionIt == transitions.end()) {
                 // No valid production rule for this input
@@ -109,7 +110,7 @@ bool TopDownParser::recoverUsingSync(const std::string& nonTerminal) {
 
         for (const auto& [symbolName, nonTerminalObj] : nonTerminalMap) {
             if (symbolName == nonTerminal) {
-                for (const auto& transition : nonTerminalObj.getTransitions()) {
+                for (const auto& transition : nonTerminalObj->getTransitions()) {
                     if (transition.first->getName() == currentInput && transition.first->getIsSync()) {
                         std::cerr << "Recovered at sync symbol: " << currentInput << std::endl;
                         return true;

@@ -23,6 +23,7 @@
 #include "ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h"
 #include "ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.h"
 #include "ParserGenerator/ParserTable/ParserTable.h"
+#include "ParserGenerator/TopDownParser/TopDownParser.h"
 
 void build()
 {
@@ -54,9 +55,9 @@ void build()
 }
 
 void run() {
-//    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
-//    Tokenizer tokenizer(programPath, tableFilePath);
-//    performTokenization();
+    std::cout << "STEP5 : Starting Token extraction..." << std::endl;
+    Tokenizer tokenizer(programPath, tableFilePath);
+    performTokenization();
 
     std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
     NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
@@ -75,6 +76,16 @@ void run() {
     ParserTable parserTable(hussienMap);
     parserTable.parserTableCreator();
     parserTable.printTable(parseTableFilePath);
+
+    print("STEP8 : Parsing table created successfully.");
+
+    std::vector<std::string> nonTerminalsNames;
+    for (const auto& nonTerminal : nonTerminals) {
+        nonTerminalsNames.push_back(nonTerminal->getName());
+    }
+    TopDownParser topDownParser(hussienMap,nonTerminalsNames,tokenizer);
+    std::vector<std::string> output = topDownParser.parse();
+    print("STEP9 : Parsing completed successfully.");
 
 }
 

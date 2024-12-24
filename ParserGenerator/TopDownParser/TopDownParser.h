@@ -13,7 +13,7 @@
 class TopDownParser {
 private:
     // Map of NonTerminals with their respective data
-    std::map<std::string, NonTerminal> nonTerminalMap;
+    std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalMap;
 
     // List of non-terminal strings
     std::vector<std::string> nonTerminals;
@@ -43,7 +43,6 @@ private:
 
     bool recoverUsingSync(const std::string &nonTerminal);
 
-    void print(const std::string &top, const std::string &currentInput, std::vector<std::string> &output);
 
     /**
      * Helper function to add the contents of a stack to a level string.
@@ -61,15 +60,17 @@ public:
      * @param tokenizer The tokenizer to generate input tokens.
      */
     TopDownParser(
-        std::map<std::string, NonTerminal> nonTerminalMap,
+            std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalMap,
         std::vector<std::string> nonTerminals,
-        Tokenizer tokenizer);
+        Tokenizer& tokenizer);
 
     /**
      * Parses the input tokens and produces an output sequence.
      * @return A vector of parsed strings, or an empty vector on failure.
      */
     std::vector<std::string> parse();
+    void print(const std::string &top, const std::string &currentInput, std::vector<std::string> &output);
+
 };
 
 #endif // PROJECT_TOPDOWNPARSER_H
