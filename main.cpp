@@ -57,55 +57,14 @@ void run() {
 //    Tokenizer tokenizer(programPath, tableFilePath);
 //    performTokenization();
 
-//    std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
-//    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
-//    nonTerminalsCreator.readCFGFile();
-//    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
-//
-//    print("STEP7 : Printing nonTerminals...");
-//    std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
-//    NonTerminalsCreator::printNonTerminals(nonTerminals);
-    print("STEP8 : Testing Left Recursion Elimination...");
-    std::set<std::shared_ptr<NonTerminal>> nonTerminals;
+    std::cout << "STEP6 : Starting Creation of non terminals from CFG file..." << std::endl;
+    NonTerminalsCreator nonTerminalsCreator(CFGFilePath);
+    nonTerminalsCreator.readCFGFile();
+    std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
 
-    // create some rules here
-
-    // create non terminals named A, B
-    auto A = std::make_shared<NonTerminal>("A");
-    auto B = std::make_shared<NonTerminal>("B");
-
-    // create terminals named a,c,d
-    auto a = std::make_shared<Terminal>("a");
-    auto c = std::make_shared<Terminal>("c");
-    auto d = std::make_shared<Terminal>("d");
-
-    // create a production A -> Ba
-    std::vector<std::shared_ptr<Symbol>> symbols;
-    symbols.push_back(B);
-    symbols.push_back(a);
-    auto production = std::make_shared<Production>(symbols);
-    A->addProduction(production);
-
-    // create a production B -> Ac | d
-    std::vector<std::shared_ptr<Symbol>> symbols2;
-    symbols2.push_back(A);
-    symbols2.push_back(c);
-    auto production2 = std::make_shared<Production>(symbols2);
-    B->addProduction(production2);
-
-    std::vector<std::shared_ptr<Symbol>> symbols3;
-    symbols3.push_back(d);
-    auto production3 = std::make_shared<Production>(symbols3);
-    B->addProduction(production3);
-
-    nonTerminals.insert(A);
-    nonTerminals.insert(B);
-
-
-    LL1GrammarConverter ll1GrammarConverter(nonTerminals);
-    auto newNonTerminals = ll1GrammarConverter.convertToLL1();
-    NonTerminalsCreator::printNonTerminals(newNonTerminals);
-
+    print("STEP7 : Printing nonTerminals...");
+    std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
+    NonTerminalsCreator::printNonTerminals(nonTerminals);
 }
 
 int main(int argc, char* argv[]) {

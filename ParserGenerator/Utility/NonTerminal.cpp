@@ -76,3 +76,24 @@ void NonTerminal::addTransition(const std::shared_ptr<Terminal> &terminal, const
 {
     _transitions[terminal] = production;
 }
+
+void NonTerminal::sortProductions() {
+    std::sort(_productions.begin(), _productions.end(),
+    [](const std::shared_ptr<Production> &a, const std::shared_ptr<Production> &b) {
+        // Extract symbols from each production
+        const auto &symbolsA = a->getSymbols();
+        const auto &symbolsB = b->getSymbols();
+
+        // Convert symbols to their names
+        std::vector<std::string> namesA;
+        std::vector<std::string> namesB;
+
+        for (const auto &symbol : symbolsA)
+            namesA.push_back(symbol->getName()); // Assuming Symbol has a getName() method.
+        for (const auto &symbol : symbolsB)
+            namesB.push_back(symbol->getName());
+
+        // Compare the names lexicographically
+        return namesA < namesB; // std::vector supports lexicographical comparison
+    });
+}

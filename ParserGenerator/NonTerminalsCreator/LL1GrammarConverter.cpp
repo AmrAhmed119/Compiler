@@ -1,7 +1,4 @@
-//
-// Created by Hp on 12/24/2024.
-//
-
+#include <iostream>
 #include "LL1GrammarConverter.h"
 
 const std::string EPSILON = "\\L";
@@ -39,7 +36,9 @@ void LL1GrammarConverter::eliminateLeftRecursion() {
 }
 
 void LL1GrammarConverter::performLeftFactoring() {
-
+    for (const auto &nonTerminal : nonTerminals) {
+        factorizeNonTerminal(nonTerminal);
+    }
 }
 
 void LL1GrammarConverter::solveImmediateLeftRecursion(std::shared_ptr<NonTerminal> &nonTerminal) {
@@ -142,4 +141,51 @@ void LL1GrammarConverter::solveNonImmediateLeftRecursion(std::shared_ptr<NonTerm
     }
 
     nonTerminalI->setProductions(newProductions);
+}
+
+void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal> &nonTerminal) {
+    nonTerminal->sortProductions();
+    auto productions = nonTerminal->getProductions();
+
+    std::map<std::string, std::vector<std::shared_ptr<Production>>> productionMap;
+    for (const auto &production : productions) {
+        productionMap[production->getFirstSymbolName()].push_back(production);
+    }
+
+    std::vector<std::shared_ptr<Production>> newProductions;
+    std::string lastName = nonTerminal->getName();
+    std::vector<std::shared_ptr<NonTerminal>> newNonTerminals;
+
+    for (const auto &[_, commonProductions] : productionMap) {
+        if (commonProductions.size() > 1) {
+            auto newNonTerminal = std::make_shared<NonTerminal>(lastName + "*");
+            lastName += "*";
+            for (const auto &common : commonProductions) {
+                std::shared_ptr<Production> newProduction = std::make_shared<Production>();
+                auto symbols = common->getSymbols();
+                for (int i = 1; i < symbols.size(); i++) {
+                    newProduction->addSymbol(symbols[i]);
+                }
+                if (symbols.size() > 1) {
+                    newNonTerminal->addProduction(newProduction);
+                }
+            }
+            std::cout << nonTerminal->getName() << std::endl;
+            newNonTerminals.push_back(newNonTerminal);
+//            nonTerminals.push_back(newNonTerminal);
+            std::cout << nonTerminal->getName() << std::endl;
+            auto symbol = commonProductions[0]->getSymbols()[0];
+            std::shared_ptr<Production> newProductionForBaseNonTerminal = std::make_shared<Production>();
+            newProductionForBaseNonTerminal->addSymbol(symbol);
+            newProductionForBaseNonTerminal->addSymbol(newNonTerminal);
+            newProductions.push_back(newProductionForBaseNonTerminal);
+        } else {
+            newProductions.push_back(commonProductions[0]);
+        }
+    }
+
+    nonTerminal->setProductions(newProductions);
+    for (auto a : newNonTerminals) {
+        nonTerminals.push_back(a);
+    }
 }
