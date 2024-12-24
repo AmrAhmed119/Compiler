@@ -20,3 +20,11 @@ bool Symbol::operator<(const Symbol &other) const
 {
     return this->getName() < other.getName();
 }
+
+// Constructor to initialize the name and isSync
+Symbol::Symbol(const std::string& name, bool isSync) : _name(name), isSync(isSync) {}
+
+// Getter for isSync
+bool Symbol::getIsSync() const {
+    return isSync;
+}
