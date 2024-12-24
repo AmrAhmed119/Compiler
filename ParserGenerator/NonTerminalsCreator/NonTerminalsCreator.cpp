@@ -12,6 +12,7 @@ const std::string EPSILON = "\\L";
 
 std::pair<std::string, std::string> splitLine(std::string& str, const char* delim);
 std::vector<std::string> splitProduction(const std::string& str, char delimiter);
+std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals);
 std::vector<std::set<std::shared_ptr<Terminal>>> calcFirstOfNT(std::shared_ptr<NonTerminal> &nt);
 std::set<std::shared_ptr<Terminal>> calcFirstOfProduction(std::shared_ptr<Production> &production);
 std::set<std::shared_ptr<Terminal>> setsUnion(const std::vector<std::set<std::shared_ptr<Terminal>>> &unexpandedSet);
@@ -24,6 +25,14 @@ void removeEpsFromSet(std::set<std::shared_ptr<Terminal>> &curSet);
 void addFollows(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals);
 void addFollowForProduction(std::shared_ptr<Production> &production, std::shared_ptr<NonTerminal> &head);
 void followToNt(std::shared_ptr<NonTerminal> &nonTerminal, std::shared_ptr<NonTerminal> &head);
+
+std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals) {
+    std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalsMap;
+    for (const auto& nonTerminal : nonTerminals) {
+        nonTerminalsMap[nonTerminal->getName()] = nonTerminal;
+    }
+    return nonTerminalsMap;
+}
 
 std::pair<std::string, std::string> splitLine(std::string& str, const char* delim) {
     int pos = (int)str.find(delim);
@@ -152,6 +161,9 @@ std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals()
     for (int i = 0; i < _grammarLines.size(); i++) {
         processNonTerminal(_grammarLines[i], i == 0);
     }
+    auto nonTerminalsMap = getNonTerminalsMap(getNonTerminals());
+    createFirst(nonTerminalsMap);
+//    createFollow(nonTerminalsMap);
     return getNonTerminals();
 }
 

@@ -61,8 +61,8 @@ void run() {
     nonTerminalsCreator.readCFGFile();
     std::vector<std::string> grammarLines = nonTerminalsCreator.getGrammarLines();
 
-    print("STEP7 : Printing nonTerminals...");
     std::set<std::shared_ptr<NonTerminal>> nonTerminals = nonTerminalsCreator.createNonTerminals();
+    print("STEP7 : Printing nonTerminals...");
     NonTerminalsCreator::printNonTerminals(nonTerminals);
 }
 
