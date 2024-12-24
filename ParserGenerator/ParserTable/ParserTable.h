@@ -15,6 +15,7 @@ public:
 
     void parserTableCreator();
 
+    void printTable(std::string filePath);
 
 };
 
