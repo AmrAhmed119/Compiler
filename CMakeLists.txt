@@ -32,5 +32,7 @@ add_executable(Project main.cpp
         ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h
         ParserGenerator/ParserTable/ParserTable.cpp
         ParserGenerator/ParserTable/ParserTable.h
+        ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.cpp
+        ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.h
 )
 

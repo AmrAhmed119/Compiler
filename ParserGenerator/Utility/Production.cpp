@@ -29,3 +29,7 @@ void Production::clearSymbols()
 {
     _symbols.clear();
 }
+
+std::string Production::getFirstSymbolName() const {
+    return _symbols[0]->getName();
+}
