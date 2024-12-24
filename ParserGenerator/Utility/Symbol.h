@@ -10,8 +10,6 @@ private:
     bool isSync; // Attribute to store whether the terminal is sync
 
 public:
-    // Default constructor
-    Symbol() : _isSync(false) {}
 
     // Destructor
     virtual ~Symbol() = default;
