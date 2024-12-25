@@ -31,6 +31,8 @@ public:
     static void printNonTerminals(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals);
     void createFirst(std::map<std::string, std::shared_ptr<NonTerminal >> &nonTerminals);
     void createFollow(std::map<std::string, std::shared_ptr<NonTerminal >> &nonTerminals);
+    void addDollarForStart(std::shared_ptr<NonTerminal> &nonTerminal);
+    void addTerminalsAndFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals);
 };
 
 

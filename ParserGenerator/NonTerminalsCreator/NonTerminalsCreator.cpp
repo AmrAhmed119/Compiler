@@ -18,8 +18,6 @@ std::vector<std::set<std::shared_ptr<Terminal>>> calcFirstOfNT(std::shared_ptr<N
 std::set<std::shared_ptr<Terminal>> calcFirstOfProduction(std::shared_ptr<Production> &production);
 std::set<std::shared_ptr<Terminal>> setsUnion(const std::vector<std::set<std::shared_ptr<Terminal>>> &unexpandedSet);
 bool hasEps(const std::set<std::shared_ptr<Terminal>> &expandedSet);
-void addTerminalsAndFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals);
-void addDollarForStart(std::shared_ptr<NonTerminal> &nonTerminal);
 void terminalAndFirstToProduction(std::shared_ptr<Production> &production);
 bool terminalAndFirstToNt(std::shared_ptr<NonTerminal> &cur, std::shared_ptr<Symbol> &next);
 void removeEpsFromSet(std::set<std::shared_ptr<Terminal>> &curSet);
@@ -313,7 +311,7 @@ void NonTerminalsCreator::createFollow(std::map<std::string, std::shared_ptr<Non
     addFollows(nonTerminals);
 }
 
-void addTerminalsAndFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals)
+void NonTerminalsCreator::addTerminalsAndFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals)
 {
     for (auto nonTerminal : nonTerminals)
     {
@@ -323,13 +321,14 @@ void addTerminalsAndFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &n
     }
 }
 
-void addDollarForStart(std::shared_ptr<NonTerminal> &nonTerminal)
+void NonTerminalsCreator::addDollarForStart(std::shared_ptr<NonTerminal> &nonTerminal)
 {
     if (nonTerminal->getIsStarting())
     {
         std::set<std::shared_ptr<Terminal>> curSet;
         std::shared_ptr<Terminal> endText = std::make_shared<Terminal>("$", false);
         curSet.insert(endText);
+        symbols.insert({"$", endText});
         nonTerminal->setFollow(curSet);
     }
 }

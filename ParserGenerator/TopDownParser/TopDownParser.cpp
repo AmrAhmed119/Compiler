@@ -97,7 +97,7 @@ std::vector<std::string> TopDownParser::parse() {
 }
 
 bool TopDownParser::isTerminal(const std::string& token) {
-    return std::find(nonTerminals.begin(), nonTerminals.end(), token) == nonTerminals.end();
+    return (std::find(nonTerminals.begin(), nonTerminals.end(), token) == nonTerminals.end())|(token == "$");
 }
 
 std::string TopDownParser::addStackToLevel(std::stack<std::string> tokenStack, std::string levelStr) {
