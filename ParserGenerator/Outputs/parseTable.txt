@@ -1,112 +1,112 @@
 NonTerminal: ASSIGNMENT
+Terminal: id Production: id assign EXPRESSION ; 
 Terminal: if Production: sync 
-Terminal: while Production: sync 
 Terminal: int Production: sync 
 Terminal: float Production: sync 
-Terminal: } Production: sync 
-Terminal: id Production: id assign EXPRESSION ; 
-NonTerminal: DECLARATION
-Terminal: if Production: sync 
 Terminal: while Production: sync 
+Terminal: } Production: sync 
+NonTerminal: DECLARATION
+Terminal: id Production: sync 
+Terminal: if Production: sync 
 Terminal: int Production: PRIMITIVE_TYPE id ; 
 Terminal: float Production: PRIMITIVE_TYPE id ; 
+Terminal: while Production: sync 
 Terminal: } Production: sync 
-Terminal: id Production: sync 
 NonTerminal: EXPRESSION
-Terminal: ( Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
-Terminal: addop Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
-Terminal: ) Production: sync 
-Terminal: ; Production: sync 
-Terminal: num Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
 Terminal: id Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
+Terminal: ; Production: sync 
+Terminal: ( Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
+Terminal: ) Production: sync 
+Terminal: num Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
+Terminal: addop Production: SIMPLE_EXPRESSION EXPRESSION_TAIL 
 NonTerminal: EXPRESSION_TAIL
+Terminal: ; Production: \L 
 Terminal: relop Production: relop SIMPLE_EXPRESSION 
 Terminal: ) Production: \L 
-Terminal: ; Production: \L 
 NonTerminal: FACTOR
+Terminal: id Production: id 
+Terminal: ; Production: sync 
 Terminal: ( Production: ( EXPRESSION ) 
 Terminal: relop Production: sync 
-Terminal: addop Production: sync 
 Terminal: ) Production: sync 
-Terminal: ; Production: sync 
 Terminal: num Production: num 
+Terminal: addop Production: sync 
 Terminal: mulop Production: sync 
-Terminal: id Production: id 
 NonTerminal: IF
+Terminal: id Production: sync 
 Terminal: if Production: if ( EXPRESSION ) { STATEMENT } else { STATEMENT } 
-Terminal: while Production: sync 
 Terminal: int Production: sync 
 Terminal: float Production: sync 
+Terminal: while Production: sync 
 Terminal: } Production: sync 
-Terminal: id Production: sync 
 NonTerminal: METHOD_BODY
+Terminal: id Production: STATEMENT_LIST 
 Terminal: if Production: STATEMENT_LIST 
-Terminal: while Production: STATEMENT_LIST 
 Terminal: int Production: STATEMENT_LIST 
 Terminal: float Production: STATEMENT_LIST 
-Terminal: id Production: STATEMENT_LIST 
+Terminal: while Production: STATEMENT_LIST 
 Terminal: $ Production: sync 
 NonTerminal: PRIMITIVE_TYPE
+Terminal: id Production: sync 
 Terminal: int Production: int 
 Terminal: float Production: float 
-Terminal: id Production: sync 
 NonTerminal: SIGN
-Terminal: ( Production: sync 
-Terminal: addop Production: addop 
-Terminal: num Production: sync 
 Terminal: id Production: sync 
+Terminal: ( Production: sync 
+Terminal: num Production: sync 
+Terminal: addop Production: addop 
 NonTerminal: SIMPLE_EXPRESSION
+Terminal: id Production: TERM SIMPLE_EXPRESSION_TAIL 
+Terminal: ; Production: sync 
 Terminal: ( Production: TERM SIMPLE_EXPRESSION_TAIL 
 Terminal: relop Production: sync 
-Terminal: addop Production: SIGN TERM SIMPLE_EXPRESSION_TAIL 
 Terminal: ) Production: sync 
-Terminal: ; Production: sync 
 Terminal: num Production: TERM SIMPLE_EXPRESSION_TAIL 
-Terminal: id Production: TERM SIMPLE_EXPRESSION_TAIL 
+Terminal: addop Production: SIGN TERM SIMPLE_EXPRESSION_TAIL 
 NonTerminal: SIMPLE_EXPRESSION_TAIL
-Terminal: relop Production: \L 
-Terminal: addop Production: addop TERM SIMPLE_EXPRESSION_TAIL 
-Terminal: ) Production: \L 
 Terminal: ; Production: \L 
+Terminal: relop Production: \L 
+Terminal: ) Production: \L 
+Terminal: addop Production: addop TERM SIMPLE_EXPRESSION_TAIL 
 NonTerminal: STATEMENT
+Terminal: id Production: ASSIGNMENT 
 Terminal: if Production: IF 
-Terminal: while Production: WHILE 
 Terminal: int Production: DECLARATION 
 Terminal: float Production: DECLARATION 
+Terminal: while Production: WHILE 
 Terminal: } Production: sync 
-Terminal: id Production: ASSIGNMENT 
 NonTerminal: STATEMENT_LIST
+Terminal: id Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: if Production: STATEMENT STATEMENT_LIST_TAIL 
-Terminal: while Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: int Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: float Production: STATEMENT STATEMENT_LIST_TAIL 
-Terminal: id Production: STATEMENT STATEMENT_LIST_TAIL 
+Terminal: while Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: $ Production: sync 
 NonTerminal: STATEMENT_LIST_TAIL
+Terminal: id Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: if Production: STATEMENT STATEMENT_LIST_TAIL 
-Terminal: while Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: int Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: float Production: STATEMENT STATEMENT_LIST_TAIL 
-Terminal: id Production: STATEMENT STATEMENT_LIST_TAIL 
+Terminal: while Production: STATEMENT STATEMENT_LIST_TAIL 
 Terminal: $ Production: \L 
 NonTerminal: TERM
+Terminal: id Production: FACTOR TERM_TAIL 
+Terminal: ; Production: sync 
 Terminal: ( Production: FACTOR TERM_TAIL 
 Terminal: relop Production: sync 
-Terminal: addop Production: sync 
 Terminal: ) Production: sync 
-Terminal: ; Production: sync 
 Terminal: num Production: FACTOR TERM_TAIL 
-Terminal: id Production: FACTOR TERM_TAIL 
+Terminal: addop Production: sync 
 NonTerminal: TERM_TAIL
-Terminal: relop Production: \L 
-Terminal: addop Production: \L 
-Terminal: ) Production: \L 
 Terminal: ; Production: \L 
+Terminal: relop Production: \L 
+Terminal: ) Production: \L 
+Terminal: addop Production: \L 
 Terminal: mulop Production: mulop FACTOR TERM_TAIL 
 NonTerminal: WHILE
+Terminal: id Production: sync 
 Terminal: if Production: sync 
-Terminal: while Production: while ( EXPRESSION ) { STATEMENT } 
 Terminal: int Production: sync 
 Terminal: float Production: sync 
+Terminal: while Production: while ( EXPRESSION ) { STATEMENT } 
 Terminal: } Production: sync 
-Terminal: id Production: sync 
