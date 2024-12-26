@@ -46,9 +46,9 @@ void LL1GrammarConverter::eliminateLeftRecursion()
 
 void LL1GrammarConverter::performLeftFactoring()
 {
-    for (const auto &nonTerminal : nonTerminals)
+    for (int i = 0; i < nonTerminals.size(); i++)
     {
-        factorizeNonTerminal(nonTerminal);
+        factorizeNonTerminal(nonTerminals[i]);
     }
 }
 
@@ -129,7 +129,7 @@ void LL1GrammarConverter::solveImmediateLeftRecursion(std::shared_ptr<NonTermina
     }
     // add epsilon production
     std::shared_ptr<Production> epsilonProduction = std::make_shared<Production>();
-    epsilonProduction->addSymbol(std::make_shared<Terminal>(EPSILON));
+    epsilonProduction->addSymbol(std::make_shared<Terminal>(EPSILON, true));
     newProductions.push_back(epsilonProduction);
 
     newNonTerminal->setProductions(newProductions);
@@ -165,7 +165,7 @@ void LL1GrammarConverter::solveNonImmediateLeftRecursion(std::shared_ptr<NonTerm
                 }
                 if (newProduction->getSymbols().empty())
                 {
-                    newProduction->addSymbol(std::make_shared<Terminal>(EPSILON));
+                    newProduction->addSymbol(std::make_shared<Terminal>(EPSILON, true));
                 }
                 newProductions.push_back(newProduction);
             }
@@ -194,7 +194,7 @@ void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal
     std::map<std::string, std::vector<std::shared_ptr<Production>>> productionMap;
     for (const auto &production : productions)
     {
-        productionMap[production->getFirstSymbolName()].push_back(production); // problem not taking longest path
+        productionMap[production->getFirstSymbolName()].push_back(production); 
     }
 
     std::vector<std::shared_ptr<Production>> newProductions;
@@ -211,13 +211,13 @@ void LL1GrammarConverter::factorizeNonTerminal(const std::shared_ptr<NonTerminal
             {
                 std::shared_ptr<Production> newProduction = std::make_shared<Production>();
                 auto symbols = common->getSymbols();
-                for (int i = 1; i < symbols.size(); i++)  // problem not adding eps
+                for (int i = 1; i < symbols.size(); i++)  
                 {
                     newProduction->addSymbol(symbols[i]);
                 }
                 if(symbols.size() == 1)
                 {
-                    std::shared_ptr<Terminal> eps = std::make_shared<Terminal>("\\L", true);
+                    std::shared_ptr<Terminal> eps = std::make_shared<Terminal>(EPSILON, true);
                     newProduction->addSymbol(eps);
                 }
                     
