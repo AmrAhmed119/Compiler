@@ -91,7 +91,7 @@ TopDownParser topDownParser(nonTerminalsCreator.symbols, nonTerminalsNames, toke
 std::vector<std::string> parseOutput = topDownParser.parse();
 
 // Write the output to a file
-const std::string outputFilename = "/home/abdelrahman/Desktop/compiler/Compiler/ParserGenerator/Outputs/parser_output.txt";
+const std::string outputFilename = "../ParserGenerator/Outputs/parser_output.txt";
 std::ofstream outputFile(outputFilename);
 if (outputFile.is_open()) {
     for (const auto& line : parseOutput) {
