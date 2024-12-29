@@ -258,29 +258,29 @@ void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTe
     }
 
     // print the first and the follow for each non terminal
-    for (const auto &nonTerminal : nonTerminals)
-    {
-        std::cout << "First of " << nonTerminal->getName() << ": ";
-        for (const auto &firstSet : nonTerminal->getFirst())
-        {
-            for (const auto &terminal : firstSet)
-            {
-                std::cout << terminal->getName() << " ";
-            }
-            std::cout << "| ";
-        }
-        std::cout << std::endl;
-    }
+    // for (const auto &nonTerminal : nonTerminals)
+    // {
+    //     std::cout << "First of " << nonTerminal->getName() << ": ";
+    //     for (const auto &firstSet : nonTerminal->getFirst())
+    //     {
+    //         for (const auto &terminal : firstSet)
+    //         {
+    //             std::cout << terminal->getName() << " ";
+    //         }
+    //         std::cout << "| ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
-    for (const auto &nonTerminal : nonTerminals)
-    {
-        std::cout << "Follow of " << nonTerminal->getName() << ": ";
-        for (const auto &terminal : nonTerminal->getFollow())
-        {
-            std::cout << terminal->getName() << " ";
-        }
-        std::cout << std::endl;
-    }
+    // for (const auto &nonTerminal : nonTerminals)
+    // {
+    //     std::cout << "Follow of " << nonTerminal->getName() << ": ";
+    //     for (const auto &terminal : nonTerminal->getFollow())
+    //     {
+    //         std::cout << terminal->getName() << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 }
 
 void NonTerminalsCreator::createFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals)

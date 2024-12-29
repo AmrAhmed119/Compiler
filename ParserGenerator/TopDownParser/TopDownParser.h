@@ -41,6 +41,7 @@ private:
 
     // Helper functions
     bool isTerminal(const std::string& token);
+    void printStack();
     std::stack<std::string> addProductionRuleToStack(
         std::stack<std::string> tokenStack, 
         const std::vector<std::shared_ptr<Symbol>>& productionRule

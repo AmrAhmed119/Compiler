@@ -91,17 +91,17 @@ TopDownParser topDownParser(nonTerminalsCreator.symbols, nonTerminalsNames, toke
 std::vector<std::string> parseOutput = topDownParser.parse();
 
 // Write the output to a file
-const std::string outputFilename = "../ParserGenerator/Outputs/parser_output.txt";
-std::ofstream outputFile(outputFilename);
-if (outputFile.is_open()) {
-    for (const auto& line : parseOutput) {
-        outputFile << line << std::endl;
-    }
-    outputFile.close();
-    std::cout << "Parsing complete. Output written to " << outputFilename << std::endl;
-} else {
-    std::cerr << "Error: Unable to open file " << outputFilename << " for writing." << std::endl;
-}
+// const std::string outputFilename = "../ParserGenerator/Outputs/parser_output.txt";
+// std::ofstream outputFile(outputFilename);
+// if (outputFile.is_open()) {
+//     for (const auto& line : parseOutput) {
+//         outputFile << line << std::endl;
+//     }
+//     outputFile.close();
+//     std::cout << "Parsing complete. Output written to " << outputFilename << std::endl;
+// } else {
+//     std::cerr << "Error: Unable to open file " << outputFilename << " for writing." << std::endl;
+// }
 
 print("STEP9 : Parsing completed successfully.");
 
@@ -123,6 +123,5 @@ int main(int argc, char* argv[]) {
     // } else {
     //     print("Error: Invalid command.", true);
     // }
-
     run();
 }
