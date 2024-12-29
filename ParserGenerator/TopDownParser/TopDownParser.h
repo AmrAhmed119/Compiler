@@ -1,76 +1,61 @@
-#ifndef PROJECT_TOPDOWNPARSER_H
-#define PROJECT_TOPDOWNPARSER_H
+#ifndef TOPDOWNPARSER_H
+#define TOPDOWNPARSER_H
 
-#include "../Utility/NonTerminal.h"
 #include "../../LexicalAnalyzer/Tokenizer/Tokenizer.h"
-#include <vector>
-#include <string>
-#include <stack>
+#include "../Utility/Symbol.h"
+#include "../Utility/Terminal.h"
+#include "../Utility/Production.h"
 #include <map>
 #include <memory>
+#include <stack>
 #include <queue>
+#include <string>
+#include <vector>
+#include <fstream>
 
 class TopDownParser {
+public:
+    TopDownParser(
+        std::map<std::string, std::shared_ptr<Symbol>> nonTerminalMap,
+        std::vector<std::string> nonTerminals, 
+        Tokenizer& tokenizer
+    );
+
+    // Main parsing function
+    std::vector<std::string> parse();
+
+    // Parse and output results to a file
+    void parseToFile(const std::string& outputFilename);
+    void print(
+        const std::vector<std::string>& output
+    );
+
+    void printSententialForm(const std::vector<std::string> &sententialForm);
+
 private:
-    // Map of NonTerminals with their respective data
+    // Member variables
     std::map<std::string, std::shared_ptr<Symbol>> nonTerminalMap;
-
-    // List of non-terminal strings
     std::vector<std::string> nonTerminals;
-
-    // Input queue to store tokens
     std::queue<std::string> input;
-
-    // Stack for parsing process
     std::stack<std::string> stk;
 
-    /**
-     * Helper function to determine if a token is a terminal.
-     * @param token The token to check.
-     * @return True if the token is a terminal, false otherwise.
-     */
+    // Helper functions
     bool isTerminal(const std::string& token);
-
-    /**
-     * Helper function to add production rule symbols to the stack.
-     * @param tokenStack The stack to which symbols are added.
-     * @param productionRule The symbols of the production rule.
-     * @return The updated stack.
-     */
     std::stack<std::string> addProductionRuleToStack(
-        std::stack<std::string> tokenStack,
-        const std::vector<std::shared_ptr<Symbol>>& productionRule);
-
-    bool recoverUsingSync(const std::string &nonTerminal);
-
-
-    /**
-     * Helper function to add the contents of a stack to a level string.
-     * @param tokenStack The stack to process.
-     * @param levelStr The string to append the stack contents to.
-     * @return The updated string.
-     */
-    std::string addStackToLevel(std::stack<std::string> tokenStack, std::string levelStr);
-
-public:
-    /**
-     * Constructor for the TopDownParser.
-     * @param nonTerminalMap A map of string to NonTerminal objects.
-     * @param nonTerminals A list of non-terminal symbols.
-     * @param tokenizer The tokenizer to generate input tokens.
-     */
-    TopDownParser(
-            std::map<std::string, std::shared_ptr<Symbol>> nonTerminalMap,
-        std::vector<std::string> nonTerminals,
-        Tokenizer& tokenizer);
-
-    /**
-     * Parses the input tokens and produces an output sequence.
-     * @return A vector of parsed strings, or an empty vector on failure.
-     */
-    std::vector<std::string> parse();
-    void print(const std::string &top, const std::string &currentInput, std::vector<std::string> &output);
-
+        std::stack<std::string> tokenStack, 
+        const std::vector<std::shared_ptr<Symbol>>& productionRule
+    );
+    bool recoverUsingSync(const std::string& nonTerminal);
+    void updateLeftmostDerivation(
+        std::vector<std::string>& output, 
+        const std::string& nonTerminal, 
+        const std::vector<std::shared_ptr<Symbol>>& production
+    );
+    void writeSententialForm(
+        std::ofstream& outputFile, 
+        const std::vector<std::string>& output
+    );
+    
 };
 
-#endif // PROJECT_TOPDOWNPARSER_H
+#endif // TOPDOWNPARSER_H
