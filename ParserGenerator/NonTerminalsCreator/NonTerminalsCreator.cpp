@@ -11,9 +11,9 @@
 
 const std::string EPSILON = "\\L";
 
-std::pair<std::string, std::string> splitLine(std::string& str, const char* delim);
-std::vector<std::string> splitProduction(const std::string& str, char delimiter);
-std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals);
+std::pair<std::string, std::string> splitLine(std::string &str, const char *delim);
+std::vector<std::string> splitProduction(const std::string &str, char delimiter);
+std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>> &nonTerminals);
 std::vector<std::set<std::shared_ptr<Terminal>>> calcFirstOfNT(std::shared_ptr<NonTerminal> &nt);
 std::set<std::shared_ptr<Terminal>> calcFirstOfProduction(std::shared_ptr<Production> &production);
 std::set<std::shared_ptr<Terminal>> setsUnion(const std::vector<std::set<std::shared_ptr<Terminal>>> &unexpandedSet);
@@ -25,18 +25,22 @@ void addFollows(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminal
 void addFollowForProduction(std::shared_ptr<Production> &production, std::shared_ptr<NonTerminal> &head);
 void followToNt(std::shared_ptr<NonTerminal> &nonTerminal, std::shared_ptr<NonTerminal> &head);
 
-std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals) {
+std::map<std::string, std::shared_ptr<NonTerminal>> getNonTerminalsMap(const std::set<std::shared_ptr<NonTerminal>> &nonTerminals)
+{
     std::map<std::string, std::shared_ptr<NonTerminal>> nonTerminalsMap;
-    for (const auto& nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
         nonTerminalsMap[nonTerminal->getName()] = nonTerminal;
     }
     return nonTerminalsMap;
 }
 
-std::pair<std::string, std::string> splitLine(std::string& str, const char* delim) {
+std::pair<std::string, std::string> splitLine(std::string &str, const char *delim)
+{
     int pos = (int)str.find(delim);
     trimBlanksFromEnds(str);
-    if (pos == std::string::npos) {
+    if (pos == std::string::npos)
+    {
         return {str, ""};
     }
     std::string left = str.substr(0, pos);
@@ -46,12 +50,14 @@ std::pair<std::string, std::string> splitLine(std::string& str, const char* deli
     return {left, right};
 }
 
-std::vector<std::string> splitProduction(const std::string& str, char delimiter) {
+std::vector<std::string> splitProduction(const std::string &str, char delimiter)
+{
     std::vector<std::string> result;
     std::stringstream ss(str);
     std::string token;
 
-    while (std::getline(ss, token, delimiter)) {
+    while (std::getline(ss, token, delimiter))
+    {
         trimBlanksFromEnds(token);
         result.push_back(token);
     }
@@ -61,74 +67,95 @@ std::vector<std::string> splitProduction(const std::string& str, char delimiter)
 
 NonTerminalsCreator::NonTerminalsCreator(std::string CFGFilePath) : CFGFilePath(std::move(CFGFilePath)) {}
 
-void NonTerminalsCreator::readCFGFile() {
+void NonTerminalsCreator::readCFGFile()
+{
     std::ifstream file(CFGFilePath);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         throw std::runtime_error("File not found");
     }
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(file, line))
+    {
         auto [left, right] = splitLine(line, "#");
-        if (!right.empty()) {
-            if (!left.empty()) {
+        if (!right.empty())
+        {
+            if (!left.empty())
+            {
                 _grammarLines.back() += " " + left;
             }
             _grammarLines.push_back(right);
-        } else {
+        }
+        else
+        {
             _grammarLines.back() += " " + left;
         }
     }
     file.close();
 }
 
-std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::getNonTerminals() {
+std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::getNonTerminals()
+{
     std::set<std::shared_ptr<NonTerminal>> nonTerminals;
-    for (auto &[_, symbol] : symbols) {
-        if (auto nonTerminal = std::dynamic_pointer_cast<NonTerminal>(symbol)) {
+    for (auto &[_, symbol] : symbols)
+    {
+        if (auto nonTerminal = std::dynamic_pointer_cast<NonTerminal>(symbol))
+        {
             nonTerminals.insert(nonTerminal);
         }
     }
     return nonTerminals;
 }
 
-std::vector<std::string> NonTerminalsCreator::getGrammarLines() {
+std::vector<std::string> NonTerminalsCreator::getGrammarLines()
+{
     return _grammarLines;
 }
 
-std::shared_ptr<NonTerminal> NonTerminalsCreator::createNonTerminalOrGetIfExists(const std::string &name) {
-    if (symbols.find(name) == symbols.end()) {
+std::shared_ptr<NonTerminal> NonTerminalsCreator::createNonTerminalOrGetIfExists(const std::string &name)
+{
+    if (symbols.find(name) == symbols.end())
+    {
         symbols[name] = std::make_shared<NonTerminal>(name);
     }
     return std::dynamic_pointer_cast<NonTerminal>(symbols[name]);
 }
 
-std::shared_ptr<Terminal> NonTerminalsCreator::createTerminalOrGetIfExists(const std::string &name) {
-    if (symbols.find(name) == symbols.end()) {
+std::shared_ptr<Terminal> NonTerminalsCreator::createTerminalOrGetIfExists(const std::string &name)
+{
+    if (symbols.find(name) == symbols.end())
+    {
         symbols[name] = std::make_shared<Terminal>(name, name == EPSILON);
     }
     return std::dynamic_pointer_cast<Terminal>(symbols[name]);
 }
 
-void NonTerminalsCreator::processNonTerminal(std::string& rule, bool isStarting) {
+void NonTerminalsCreator::processNonTerminal(std::string &rule, bool isStarting)
+{
     auto [left, right] = splitLine(rule, "=");
-    if (left.empty() || right.empty()) {
+    if (left.empty() || right.empty())
+    {
         throw std::runtime_error("Invalid rule");
     }
 
     auto nonTerminal = createNonTerminalOrGetIfExists(left);
-    if (isStarting) {
+    if (isStarting)
+    {
         nonTerminal->setIsStarting(true);
     }
 
     std::vector<std::string> productions = splitProduction(right, '|');
-    for (const auto& production : productions) {
+    for (const auto &production : productions)
+    {
         nonTerminal->addProduction(processProduction(production));
     }
 }
 
-std::shared_ptr<Production> NonTerminalsCreator::processProduction(const std::string &rule) {
+std::shared_ptr<Production> NonTerminalsCreator::processProduction(const std::string &rule)
+{
     std::shared_ptr<Production> production = std::make_shared<Production>();
-    if (rule == EPSILON) {
+    if (rule == EPSILON)
+    {
         production->addSymbol(createTerminalOrGetIfExists(EPSILON));
         return production;
     }
@@ -136,15 +163,21 @@ std::shared_ptr<Production> NonTerminalsCreator::processProduction(const std::st
     std::sregex_iterator iter(rule.begin(), rule.end(), productionRegex);
     std::sregex_iterator end;
 
-    while (iter != end) {
-        if ((*iter)[1].matched) {
+    while (iter != end)
+    {
+        if ((*iter)[1].matched)
+        {
             production->addSymbol(createTerminalOrGetIfExists((*iter)[1].str()));
-        } else if ((*iter)[2].matched) {
+        }
+        else if ((*iter)[2].matched)
+        {
             std::string nonTerminal = (*iter)[2].str();
             std::istringstream stream(nonTerminal);
             std::string token;
-            while (stream >> token) {
-                if (token.empty()) {
+            while (stream >> token)
+            {
+                if (token.empty())
+                {
                     continue;
                 }
                 production->addSymbol(createNonTerminalOrGetIfExists(token));
@@ -156,53 +189,68 @@ std::shared_ptr<Production> NonTerminalsCreator::processProduction(const std::st
     return production;
 }
 
-std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals() {
-    for (int i = 0; i < _grammarLines.size(); i++) {
+std::set<std::shared_ptr<NonTerminal>> NonTerminalsCreator::createNonTerminals()
+{
+    for (int i = 0; i < _grammarLines.size(); i++)
+    {
         processNonTerminal(_grammarLines[i], i == 0);
     }
 
     auto nonTerminalsSet = getNonTerminals();
-//    LL1GrammarConverter ll1GrammarConverter(nonTerminalsSet);
-//    auto newNonTerminalsSet = ll1GrammarConverter.convertToLL1();
+    LL1GrammarConverter ll1GrammarConverter(nonTerminalsSet);
+    auto newNonTerminalsSet = ll1GrammarConverter.convertToLL1();
 
-    auto nonTerminalsMap = getNonTerminalsMap(nonTerminalsSet);
+    auto nonTerminalsMap = getNonTerminalsMap(newNonTerminalsSet);
     createFirst(nonTerminalsMap);
     createFollow(nonTerminalsMap);
-    for(auto item : nonTerminalsMap)
+    for (auto item : nonTerminalsMap)
         symbols.insert({item.first, item.second});
     return getNonTerminals();
 }
 
-std::shared_ptr<NonTerminal> NonTerminalsCreator::getStartingNonTerminal() {
+std::shared_ptr<NonTerminal> NonTerminalsCreator::getStartingNonTerminal()
+{
     auto nonTerminals = getNonTerminals();
-    for (const auto& nonTerminal : nonTerminals) {
-        if (nonTerminal->getIsStarting()) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
+        if (nonTerminal->getIsStarting())
+        {
             return nonTerminal;
         }
     }
     return nullptr;
 }
 
-void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTerminal>>& nonTerminals) {
-    for (const auto& nonTerminal : nonTerminals) {
-        if (nonTerminal->getIsStarting()) {
+void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTerminal>> &nonTerminals)
+{
+    for (const auto &nonTerminal : nonTerminals)
+    {
+        if (nonTerminal->getIsStarting())
+        {
             std::cout << "Starting State: " << nonTerminal->getName() << std::endl;
             break;
         }
     }
-    for (const auto& nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
         std::string x = nonTerminal->getIsStarting() ? " (Starting State) " : "";
         std::cout << nonTerminal->getName() << x << " -> ";
-        for (const auto& production : nonTerminal->getProductions()) {
-            for (const auto& symbol : production->getSymbols()) {
-                if (auto term = std::dynamic_pointer_cast<Terminal>(symbol)) {
+        for (const auto &production : nonTerminal->getProductions())
+        {
+            for (const auto &symbol : production->getSymbols())
+            {
+                if (auto term = std::dynamic_pointer_cast<Terminal>(symbol))
+                {
                     std::string y = term->getIsEpsilon() ? " (EPS) " : "";
                     std::cout << "'" << term->getName() << "' " << y << " ";
-                } else if (auto nonTerm = std::dynamic_pointer_cast<NonTerminal>(symbol)) {
+                }
+                else if (auto nonTerm = std::dynamic_pointer_cast<NonTerminal>(symbol))
+                {
                     std::cout << symbol->getName() << " ";
                 }
             }
-            if (nonTerminal->getProductions().back() != production) {
+            if (nonTerminal->getProductions().back() != production)
+            {
                 std::cout << "| ";
             }
         }
@@ -210,10 +258,13 @@ void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTe
     }
 
     // print the first and the follow for each non terminal
-    for (const auto& nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
         std::cout << "First of " << nonTerminal->getName() << ": ";
-        for (const auto& firstSet : nonTerminal->getFirst()) {
-            for (const auto& terminal : firstSet) {
+        for (const auto &firstSet : nonTerminal->getFirst())
+        {
+            for (const auto &terminal : firstSet)
+            {
                 std::cout << terminal->getName() << " ";
             }
             std::cout << "| ";
@@ -221,14 +272,15 @@ void NonTerminalsCreator::printNonTerminals(const std::set<std::shared_ptr<NonTe
         std::cout << std::endl;
     }
 
-    for (const auto& nonTerminal : nonTerminals) {
+    for (const auto &nonTerminal : nonTerminals)
+    {
         std::cout << "Follow of " << nonTerminal->getName() << ": ";
-        for (const auto& terminal : nonTerminal->getFollow()) {
+        for (const auto &terminal : nonTerminal->getFollow())
+        {
             std::cout << terminal->getName() << " ";
         }
         std::cout << std::endl;
     }
-
 }
 
 void NonTerminalsCreator::createFirst(std::map<std::string, std::shared_ptr<NonTerminal>> &nonTerminals)
@@ -246,8 +298,10 @@ std::vector<std::set<std::shared_ptr<Terminal>>> calcFirstOfNT(std::shared_ptr<N
     std::vector<std::set<std::shared_ptr<Terminal>>> firstsOfNt;
     if (!nt->getFirst().empty())
         firstsOfNt = nt->getFirst();
-    else {
-        for (std::shared_ptr<Production> production: nt->getProductions()) {
+    else
+    {
+        for (std::shared_ptr<Production> production : nt->getProductions())
+        {
             std::set<std::shared_ptr<Terminal>> firstOfProduction = calcFirstOfProduction(production);
             firstsOfNt.push_back(firstOfProduction);
         }
