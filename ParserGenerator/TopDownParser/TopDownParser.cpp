@@ -46,14 +46,24 @@ void TopDownParser::printStack()
         return;
     }
 
+    std::ofstream stackFile("../ParserGenerator/Outputs/stack.txt", std::ios::app);
+    if (!stackFile.is_open())
+    {
+        std::cerr << "Error: Could not open stack.txt for writing." << std::endl;
+        return;
+    }
+
     std::stack<std::string> temp = stk;
     outFile << "Stack: ";
+    stackFile << "Stack: ";
     while (!temp.empty())
     {
         outFile << temp.top() << " ";
+        stackFile << temp.top() << " ";
         temp.pop();
     }
     outFile << "\n";
+    stackFile << "\n";
     outFile << "Input: " << input.front() << "\n";
 
     outFile.close();
