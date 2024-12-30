@@ -54,6 +54,7 @@ void TopDownParser::printStack()
         temp.pop();
     }
     outFile << "\n";
+    outFile << "Input: " << input.front() << "\n";
 
     outFile.close();
 }
@@ -92,7 +93,7 @@ std::vector<std::string> TopDownParser::parse()
         stk.pop();
         std::string currentInput = input.front();
 
-        if (isTerminal(top))
+        if (isTerminal(top) || currentInput == "$")
         {
             if (top == "\\L")
                 continue;
@@ -107,7 +108,8 @@ std::vector<std::string> TopDownParser::parse()
             {
                 parseOutput.push_back("Mismatch: " + top + " vs " + currentInput);
                 printMatch(top, false);
-                input.pop();
+                continue;
+                
             }
         }
         else
@@ -128,7 +130,14 @@ std::vector<std::string> TopDownParser::parse()
 
             if (productionIt == transitions.end())
             {
-                std::cerr << "No production rule: " << top << " with input " << currentInput << std::endl;
+                std::cerr << "Error: No production rule for " << top << " with input " << currentInput << ".\n";
+
+                bool recovered = recoverUsingSync(top);
+                if (!recovered)
+                {
+                    std::cerr << "Error: Could not recover from input mismatch.\n";
+                    input.pop(); // Skip current input
+                }
                 continue;
             }
 
@@ -201,102 +210,11 @@ void TopDownParser::print(const std::vector<std::string> &output)
     outFile.close();
 }
 
-// Parse and output to a file
-void TopDownParser::parseToFile(const std::string &outputFilename)
-{
-    // Open the output file
-    std::ofstream outputFile(outputFilename);
-
-    if (!outputFile.is_open())
-    {
-        std::cerr << "Error: Could not open file " << outputFilename << " for writing." << std::endl;
-        return;
-    }
-
-    std::vector<std::string> output; // Holds the leftmost derivation
-
-    while (!input.empty() && !stk.empty())
-    {
-        std::string top = stk.top();
-        stk.pop();
-        std::string currentInput = input.front();
-
-        if (isTerminal(top))
-        {
-            if (top == "\\L")
-            {
-                continue; // Ignore epsilon transitions
-            }
-            // Terminal handling
-            if (top == currentInput)
-            {
-                output.push_back(top);
-                input.pop(); // Match
-            }
-            else
-            {
-                // Terminal mismatch: skip input (error recovery)
-                outputFile << "Error: Expected " << top << " but found " << currentInput << ". Skipping input.\n";
-                input.pop();
-            }
-        }
-        else
-        {
-            // Non-terminal handling
-            auto nonTerminalIt = nonTerminalMap.find(top);
-            if (nonTerminalIt == nonTerminalMap.end())
-            {
-                outputFile << "Error: Non-terminal " << top << " not found in nonTerminal map. Skipping.\n";
-                continue;
-            }
-
-            std::shared_ptr<NonTerminal> nonTerminalObj = std::dynamic_pointer_cast<NonTerminal>(nonTerminalIt->second);
-
-            const auto &transitions = nonTerminalObj->getTransitions();
-            auto ter = std::dynamic_pointer_cast<Terminal>(this->nonTerminalMap[currentInput]);
-            auto productionIt = transitions.find(ter);
-
-            if (productionIt == transitions.end())
-            {
-                outputFile << "Error: No production rule for " << top << " with input " << currentInput << ".\n";
-
-                bool recovered = recoverUsingSync(top);
-                if (!recovered)
-                {
-                    outputFile << "Error: Could not recover from input mismatch.\n";
-                    input.pop(); // Skip current input
-                }
-                continue;
-            }
-
-            const std::shared_ptr<Production> &production = productionIt->second;
-            stk = addProductionRuleToStack(stk, production->getSymbols());
-
-            // Update the output (leftmost derivation)
-            updateLeftmostDerivation(output, top, production->getSymbols());
-        }
-
-        // Write the current derivation to the file
-        writeSententialForm(outputFile, output);
-    }
-
-    // Final validation
-    if (!input.empty())
-    {
-        outputFile << "Error: Remaining input after parsing: " << input.front() << "\n";
-    }
-    if (!stk.empty())
-    {
-        outputFile << "Error: Stack not empty after parsing: " << stk.top() << "\n";
-    }
-
-    outputFile.close(); // Close the file
-}
-
 // Utility functions
 bool TopDownParser::isTerminal(const std::string &token)
 {
-    return (std::find(nonTerminals.begin(), nonTerminals.end(), token) == nonTerminals.end()) | (token == "$");
+    bool result = (std::find(nonTerminals.begin(), nonTerminals.end(), token) == nonTerminals.end()) || (token == "$");
+    return result;
 }
 
 std::stack<std::string> TopDownParser::addProductionRuleToStack(
@@ -312,6 +230,14 @@ std::stack<std::string> TopDownParser::addProductionRuleToStack(
 
 bool TopDownParser::recoverUsingSync(const std::string &nonTerminal)
 {
+
+    std::ofstream outFile("../ParserGenerator/Outputs/parser_output.txt", std::ios::app);
+    if (!outFile.is_open())
+    {
+        std::cerr << "Error: Could not open file" << std::endl;
+        return false;
+    }
+
     while (!input.empty())
     {
         std::string currentInput = input.front();
@@ -324,17 +250,20 @@ bool TopDownParser::recoverUsingSync(const std::string &nonTerminal)
                 {
                     if (transition.first->getName() == currentInput && transition.first->getIsSync())
                     {
-                        std::cerr << "Recovered at sync symbol: " << currentInput << std::endl;
+                        outFile << "Recovered using sync symbol: " << currentInput << "\n";
+                        outFile.close();
                         return true;
                     }
                 }
             }
         }
 
-        // Skip input until a sync symbol is found
+        outFile << "Skipping input: " << currentInput << "\n";
         input.pop();
     }
 
+    outFile << "Error: Could not recover using " << nonTerminal << "\n";
+    outFile.close();
     return false;
 }
 
