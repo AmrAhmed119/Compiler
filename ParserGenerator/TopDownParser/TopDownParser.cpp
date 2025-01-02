@@ -98,12 +98,67 @@ std::vector<std::string> TopDownParser::parse()
     // Main parsing loop (expansion of the grammar)
     while (!input.empty() && !stk.empty())
     {
+        if(input.front() == "")
+            break;
         std::string top = stk.top();
         printStack();
         stk.pop();
         std::string currentInput = input.front();
 
-        if (isTerminal(top) || currentInput == "$")
+        if(!isTerminal(top) && currentInput == "$")
+        {
+            auto nonTerminalIt = nonTerminalMap.find(top);
+            if (nonTerminalIt == nonTerminalMap.end())
+            {
+                std::cerr << "Non-terminal not found: " << top << std::endl;
+                continue;
+            }
+
+            std::shared_ptr<NonTerminal> nonTerminalObj = std::dynamic_pointer_cast<NonTerminal>(nonTerminalIt->second);
+            const auto &transitions = nonTerminalObj->getTransitions();
+
+            auto ter = std::dynamic_pointer_cast<Terminal>(this->nonTerminalMap[currentInput]);
+            auto productionIt = transitions.find(ter);
+
+            if (productionIt == transitions.end())
+            {
+                std::cerr << "Error: No production rule for " << top << " with input " << currentInput << ".\n";
+
+                bool recovered = recoverUsingSync(top);
+                if (!recovered)
+                {
+                    std::cerr << "Error: Could not recover from input mismatch.\n";
+                    input.pop(); // Skip current input
+                }
+                continue;
+            }
+
+            const std::shared_ptr<Production> &production = productionIt->second;
+            stk = addProductionRuleToStack(stk, production->getSymbols());
+
+            // Build output for the current derivation step
+            std::string derivationStep;
+            for (const auto &symbol : production->getSymbols())
+            {
+                if (symbol->getName() != "\\L")
+                {
+                    sententialForm.push_back(symbol->getName());
+                    derivationStep += symbol->getName() + " "; // Accumulate symbols in one line
+                }
+            }
+
+            // Remove extra space at the end of the derivation step
+            if (!derivationStep.empty())
+            {
+                derivationStep.pop_back(); // Remove the trailing space
+                parseOutput.push_back(derivationStep);
+            }
+
+            // Print the current derivation step (for debugging)
+            // print(parseOutput);
+        }
+
+        else if (isTerminal(top) || currentInput == "$")
         {
             if (top == "\\L")
                 continue;
