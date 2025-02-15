@@ -15,5 +15,24 @@ add_executable(Project main.cpp
         LexicalAnalyzer/Tokenizer/Token.cpp
         LexicalAnalyzer/Tokenizer/FileReader.cpp
         LexicalAnalyzer/NFA/process_tokens.cpp
-        )
+        ParserGenerator/Utility/Production.cpp
+        ParserGenerator/Utility/Production.h
+        ParserGenerator/Utility/Production.h
+        ParserGenerator/Utility/Symbol.cpp
+        ParserGenerator/Utility/Symbol.h
+        ParserGenerator/Utility/Terminal.cpp
+        ParserGenerator/Utility/Terminal.h
+        ParserGenerator/Utility/NonTerminal.cpp
+        ParserGenerator/Utility/NonTerminal.h
+        ParserGenerator/Utility/Util.cpp
+        ParserGenerator/Utility/Util.h
+        ParserGenerator/TopDownParser/TopDownParser.cpp
+        ParserGenerator/TopDownParser/TopDownParser.h
+        ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.cpp
+        ParserGenerator/NonTerminalsCreator/NonTerminalsCreator.h
+        ParserGenerator/ParserTable/ParserTable.cpp
+        ParserGenerator/ParserTable/ParserTable.h
+        ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.cpp
+        ParserGenerator/NonTerminalsCreator/LL1GrammarConverter.h
+)
 

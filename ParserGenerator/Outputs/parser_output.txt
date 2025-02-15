@@ -1,0 +1,157 @@
+Stack: METHOD_BODY $ 
+Input: int
+Stack: STATEMENT_LIST $ 
+Input: int
+Stack: STATEMENT STATEMENT_LIST' $ 
+Input: int
+Stack: DECLARATION STATEMENT_LIST' $ 
+Input: int
+Stack: int id ; STATEMENT_LIST' $ 
+Input: int
+Matched  String: int
+Stack: id ; STATEMENT_LIST' $ 
+Input: id
+Matched  String: id
+Stack: ; STATEMENT_LIST' $ 
+Input: ;
+Matched  String: ;
+Stack: STATEMENT_LIST' $ 
+Input: id
+Stack: STATEMENT STATEMENT_LIST' $ 
+Input: id
+Stack: id assign EXPRESSION ; STATEMENT_LIST' $ 
+Input: id
+Matched  String: id
+Stack: assign EXPRESSION ; STATEMENT_LIST' $ 
+Input: assign
+Matched  String: assign
+Stack: EXPRESSION ; STATEMENT_LIST' $ 
+Input: num
+Stack: SIMPLE_EXPRESSION EXPRESSION* ; STATEMENT_LIST' $ 
+Input: num
+Stack: TERM SIMPLE_EXPRESSION' EXPRESSION* ; STATEMENT_LIST' $ 
+Input: num
+Stack: num TERM' SIMPLE_EXPRESSION' EXPRESSION* ; STATEMENT_LIST' $ 
+Input: num
+Matched  String: num
+Stack: TERM' SIMPLE_EXPRESSION' EXPRESSION* ; STATEMENT_LIST' $ 
+Input: ;
+Stack: \L SIMPLE_EXPRESSION' EXPRESSION* ; STATEMENT_LIST' $ 
+Input: ;
+Stack: SIMPLE_EXPRESSION' EXPRESSION* ; STATEMENT_LIST' $ 
+Input: ;
+Stack: \L EXPRESSION* ; STATEMENT_LIST' $ 
+Input: ;
+Stack: EXPRESSION* ; STATEMENT_LIST' $ 
+Input: ;
+Stack: \L ; STATEMENT_LIST' $ 
+Input: ;
+Stack: ; STATEMENT_LIST' $ 
+Input: ;
+Matched  String: ;
+Stack: STATEMENT_LIST' $ 
+Input: if
+Stack: STATEMENT STATEMENT_LIST' $ 
+Input: if
+Stack: if ( EXPRESSION ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: if
+Matched  String: if
+Stack: ( EXPRESSION ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: (
+Matched  String: (
+Stack: EXPRESSION ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Stack: SIMPLE_EXPRESSION EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Stack: TERM SIMPLE_EXPRESSION' EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Stack: id TERM' SIMPLE_EXPRESSION' EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Matched  String: id
+Stack: TERM' SIMPLE_EXPRESSION' EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Stack: \L SIMPLE_EXPRESSION' EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Stack: SIMPLE_EXPRESSION' EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Stack: \L EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Stack: EXPRESSION* ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Stack: relop SIMPLE_EXPRESSION ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: relop
+Matched  String: relop
+Stack: SIMPLE_EXPRESSION ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Stack: TERM SIMPLE_EXPRESSION' ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Stack: num TERM' SIMPLE_EXPRESSION' ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Matched  String: num
+Stack: TERM' SIMPLE_EXPRESSION' ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: )
+Stack: \L SIMPLE_EXPRESSION' ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: )
+Stack: SIMPLE_EXPRESSION' ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: )
+Stack: \L ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: )
+Stack: ) { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: )
+Matched  String: )
+Stack: { STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: {
+Matched  String: {
+Stack: STATEMENT } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Stack: id assign EXPRESSION ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: id
+Matched  String: id
+Stack: assign EXPRESSION ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: assign
+Matched  String: assign
+Stack: EXPRESSION ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Stack: SIMPLE_EXPRESSION EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Stack: TERM SIMPLE_EXPRESSION' EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Stack: num TERM' SIMPLE_EXPRESSION' EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: num
+Matched  String: num
+Stack: TERM' SIMPLE_EXPRESSION' EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: \L SIMPLE_EXPRESSION' EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: SIMPLE_EXPRESSION' EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: \L EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: EXPRESSION* ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: \L ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Stack: ; } else { STATEMENT } STATEMENT_LIST' $ 
+Input: ;
+Matched  String: ;
+Stack: } else { STATEMENT } STATEMENT_LIST' $ 
+Input: }
+Matched  String: }
+Stack: else { STATEMENT } STATEMENT_LIST' $ 
+Input: $
+Miss Matched  String: else
+Stack: { STATEMENT } STATEMENT_LIST' $ 
+Input: $
+Miss Matched  String: {
+Stack: STATEMENT } STATEMENT_LIST' $ 
+Input: $
+Miss Matched  String: STATEMENT
+Stack: } STATEMENT_LIST' $ 
+Input: $
+Miss Matched  String: }
+Stack: STATEMENT_LIST' $ 
+Input: $
+Miss Matched  String: STATEMENT_LIST'
+Stack: $ 
+Input: $
+Matched  String: $

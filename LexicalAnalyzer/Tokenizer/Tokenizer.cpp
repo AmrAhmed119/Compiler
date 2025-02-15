@@ -1,6 +1,6 @@
 #include <sstream>
 #include "Tokenizer.h"
-#include <Algorithm>
+#include <algorithm>
 #include "../../LexicalAnalyzer/Utility/Util.h"
 
 std::unordered_set<std::shared_ptr<State>> readTransitionTable(const std::string &filePath);
@@ -139,8 +139,11 @@ std::string Tokenizer::getNextToken() {
             _currentWords = _reader.readLine();
         }
     }
+    if (tokenClass[0] == '\\') {
+        tokenClass = tokenClass.substr(1);
+    }
 
-    return token;
+    return tokenClass;
 }
 
 bool Tokenizer::hasMoreTokens() {
